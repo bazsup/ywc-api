@@ -53,7 +53,8 @@
     "randomstring": "^1.1.5",
     "socket.io": "^2.0.4",
     "superagent": "^2.2.0",
-    "verror": "^1.10.0"
+    "verror": "^1.10.0",
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",

@@ -5,6 +5,7 @@
   "main": "build/bin/server.js",
   "scripts": {
     "dev": "nodemon ./src/bin/server.js --exec babel-node",
+    "refactor": "prettier --config prettier.config.js --write \"**/**/*.js\" --ignore-path .prettierignore",
     "dev-cron": "babel-node ./src/cron.js",
     "build": "babel src --out-dir build --source-maps",
     "build:file": "babel src --out-file build/bundle.js --source-maps",

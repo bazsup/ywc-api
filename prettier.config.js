@@ -3,12 +3,10 @@
 
 module.exports = {
   parser: "flow",
-  tabWidth: 2,
-  useTabs: true,
+  useTabs: false,
   semi: false,
   singleQuote: false,
   trailingComma: "all",
   bracketSpacing: false,
-  jsxBracketSameLine: true,
   arrowParens: "always",
 }

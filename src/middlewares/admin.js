@@ -1,4 +1,4 @@
-import {respondErrors} from "../utilities"
+import {respondErrors} from "../utils"
 import _ from "lodash"
 
 export const requireRoles = (...roles) => (req, res, next) => {

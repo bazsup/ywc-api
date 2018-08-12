@@ -2,7 +2,7 @@ import multer from "multer"
 import mime from "mime"
 import _ from "lodash"
 import mkdirp from "mkdirp"
-import {respondErrors} from "../utilities"
+import {respondErrors} from "../utils"
 import {generateUniqueString} from "../helpers"
 import config from "config"
 

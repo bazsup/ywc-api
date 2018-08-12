@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 import config from "config"
 import {User, Admin} from "../models"
-import {respondErrors} from "../utilities"
+import {respondErrors} from "../utils"
 import {getUserInfoFromToken} from "../services"
 
 // export const authenticator = (req, res, next) => {

@@ -14,7 +14,6 @@ mongoose.connect(
 // root admin user setting
 const username = "admin"
 const password = "password"
-
 ;(async () => {
   try {
     await Admin.create({

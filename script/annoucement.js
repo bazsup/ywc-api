@@ -9,7 +9,6 @@ mongoose.Promise = global.Promise
 mongoose.connect(
   process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
 )
-
 ;(async () => {
   const queryPromise = (major) =>
     User.find({

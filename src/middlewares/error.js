@@ -6,8 +6,8 @@ const logger = winston.createLogger({
   level: "error",
   format: winston.format.json(),
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-  ]
+    new winston.transports.File({filename: "error.log", level: "error"}),
+  ],
 })
 
 export const errorHandler = (err, req, res, next) => {
@@ -24,7 +24,9 @@ export const errorHandler = (err, req, res, next) => {
 
   // response error with json
   res.status(500)
-  res.json(createJsonResponse("error", {
-    message: err.message,
-  }))
+  res.json(
+    createJsonResponse("error", {
+      message: err.message,
+    }),
+  )
 }

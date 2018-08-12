@@ -26,8 +26,6 @@ export {
   adminAuthorize,
 } from "./admin"
 
-export {
-  errorHandler,
-} from "./error"
+export {errorHandler} from "./error"
 
 export {singleUpload} from "./multer-uploader"

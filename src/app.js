@@ -67,5 +67,4 @@ app.use("/uploads", express.static("uploads"))
 // Error handling
 app.use(errorHandler)
 
-
 export default app

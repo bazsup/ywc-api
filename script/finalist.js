@@ -14,7 +14,6 @@ mongoose.connect(
 const finalists = readFileSync(path.join(__dirname, "./backup.txt"))
   .toString()
   .split("\n")
-// console.log(finalists);
 
 finalists.map((user) => User.findOne({interviewRef: user}).then())
 

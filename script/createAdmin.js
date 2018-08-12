@@ -1,3 +1,5 @@
+// generate root admin user for backoffice login
+
 import bcrypt from "bcrypt"
 import mongoose from "mongoose"
 import config from "config"

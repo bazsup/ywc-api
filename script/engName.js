@@ -14,7 +14,6 @@ mongoose.connect(
 const finalists = readFileSync(path.join(__dirname, "./eng_name.csv"))
   .toString()
   .split("\n")
-// console.log(finalists);
 
 let out = ""
 

@@ -1,33 +1,26 @@
 {
-  "name": "ywc16-api",
+  "name": "ywc-api",
   "version": "1.0.0",
-  "description": "RESTFul API Server for YWC#16 Website. Code reuse from YWC#15 & YWC14",
+  "description": "registration & grading api for young webmaster camp, codebase from YWC14 & YWC15",
   "main": "build/bin/server.js",
   "scripts": {
     "dev": "nodemon ./src/bin/server.js --exec babel-node",
     "refactor": "prettier --config prettier.config.js --write \"**/**/*.js\" --ignore-path .prettierignore",
-    "dev-cron": "babel-node ./src/cron.js",
     "build": "babel src --out-dir build --source-maps",
     "build:file": "babel src --out-file build/bundle.js --source-maps",
-    "build:clear": "rm -rf build",
-    "start": "pm2 start pm2_deploy.json --env production",
-    "start-staging": "pm2 start pm2_deploy.json --env staging",
-    "newclear": "rm -rf node_module && npm i",
-    "genAdmin": "babel-node ./script/genAdmin.js",
-    "getAnswer": "babel-node ./script/get_answers.js"
+    "build:clean": "rm -rf build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/komcal/ywc-register-backend-api.git"
+    "url": "git+https://github.com/chunza2542/ywc-api.git"
   },
-  "author": "",
+  "author": "Chun Rapeepat <chunza2542@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/komcal/ywc-register-backend-api/issues"
+    "url": "https://github.com/chunza2542/ywc-api/issues"
   },
-  "homepage": "https://github.com/komcal/ywc-register-backend-api#readme",
+  "homepage": "https://github.com/chunza2542/ywc-api#readme",
   "dependencies": {
-    "@slack/client": "^3.10.0",
     "babel-eslint": "^6.1.2",
     "babel-plugin-transform-runtime": "^6.15.0",
     "bcrypt": "^1.0.3",
@@ -70,7 +63,6 @@
     "eslint": "^3.3.1",
     "eslint-config-airbnb-base": "^5.0.2",
     "eslint-plugin-babel": "^3.3.0",
-    "eslint-plugin-import": "^1.13.0",
-    "pm2": "^2.5.0"
+    "eslint-plugin-import": "^1.13.0"
   }
 }

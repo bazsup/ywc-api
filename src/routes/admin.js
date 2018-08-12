@@ -3,7 +3,7 @@ import bcrypt from "bcrypt"
 
 import {adminAuthen} from "../middlewares/authenticator"
 import {requireRoles, adminAuthorize} from "../middlewares"
-import {respondResult, respondSuccess, respondErrors} from "../utilities"
+import {respondResult, respondSuccess, respondErrors} from "../utils"
 import {Admin} from "../models"
 
 const router = Router()

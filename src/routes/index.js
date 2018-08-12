@@ -8,7 +8,7 @@ import registration from "./registration"
 import grading from "./grading"
 
 const router = Router()
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   res.status(200).send({status: "YWC API Server is running!"})
 })
 router.use("/users", users)

@@ -3,14 +3,13 @@ import compression from "compression"
 import session from "express-session"
 import bodyParser from "body-parser"
 import logger from "morgan"
-import errorHandler from "errorhandler"
 import lusca from "lusca"
 import flash from "express-flash"
 import mongoose from "mongoose"
 import cors from "cors"
 import config from "config"
 import routes from "./routes"
-import {validator} from "./middlewares"
+import {validator, errorHandler} from "./middlewares"
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -57,10 +56,6 @@ app.use(flash())
 //     lusca.csrf()(req, res, next);
 //   }
 // });
-app.use((req, res, next) => {
-  res.error = (e) => res.status(500).send(e)
-  next()
-})
 app.use(lusca.xframe("SAMEORIGIN"))
 app.use(lusca.xssProtection(true))
 app.disable("etag")
@@ -68,9 +63,9 @@ app.use(cors())
 // app.use(authenticator);
 app.use("/", routes)
 app.use("/uploads", express.static("uploads"))
-app.use(errorHandler())
-// app.use((req, res, next) => {
-//   console.log(req.get('accessToken'));
-//   next();
-// });
+
+// Error handling
+app.use(errorHandler)
+
+
 export default app

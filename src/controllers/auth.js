@@ -4,7 +4,7 @@ import _ from "lodash"
 import config from "config"
 import bcrypt from "bcrypt"
 
-import {respondResult, respondErrors} from "../utilities"
+import {respondResult, respondErrors} from "../utils"
 import {User, Question, Slip, Admin} from "../models"
 
 // login with facebook and generate jwt

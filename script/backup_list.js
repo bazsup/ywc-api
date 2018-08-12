@@ -10,7 +10,7 @@ import Papa from "papaparse"
 
 mongoose.Promise = global.Promise
 mongoose.connect(
-	process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
 )
 
 // const backup = {
@@ -21,90 +21,90 @@ mongoose.connect(
 // };
 
 const selectedField = [
-	"firstName",
-	"lastName",
-	"nickname",
-	"facebook",
-	"birthdate",
-	"sex",
-	"phone",
-	"email",
-	"religion",
-	"university",
-	"academicYear",
-	"faculty",
-	"department",
-	"shirtSize",
-	"disease",
-	"food",
-	"foodAllergy",
-	"medAllergy",
-	"address",
-	"province",
-	"postalCode",
-	"blood",
-	"emergencyPhone",
-	"emergencyPhoneRelated",
-	"emergencyName",
+  "firstName",
+  "lastName",
+  "nickname",
+  "facebook",
+  "birthdate",
+  "sex",
+  "phone",
+  "email",
+  "religion",
+  "university",
+  "academicYear",
+  "faculty",
+  "department",
+  "shirtSize",
+  "disease",
+  "food",
+  "foodAllergy",
+  "medAllergy",
+  "address",
+  "province",
+  "postalCode",
+  "blood",
+  "emergencyPhone",
+  "emergencyPhoneRelated",
+  "emergencyName",
 ].join(" ")
 
 const list = readFileSync(path.join(__dirname, "./backup.txt"))
-	.toString()
-	.split("\n")
+  .toString()
+  .split("\n")
 // console.log(list);
 
 Promise.all(
-	list.map((interviewRef) =>
-		User.findOne({interviewRef})
-			.select(selectedField)
-			.lean(),
-	),
+  list.map((interviewRef) =>
+    User.findOne({interviewRef})
+      .select(selectedField)
+      .lean(),
+  ),
 )
-	.then((users) =>
-		users.map((user) => ({
-			...user,
-			name: `${user.firstName} ${user.lastName}`,
-			address: `${user.address} ${user.province} ${user.postalCode}`
-				.split("\n")
-				.join(" "),
-			emergencyContactName: `${user.emergencyName} (${
-				user.emergencyPhoneRelated
-			})`,
-			facebook: `https://www.facebook.com/${user.facebook}`,
-			birthdate: moment(user.birthdate).format("D MMMM YYYY"),
-		})),
-	)
-	.then((users) =>
-		Papa.unparse({
-			fields: [
-				"name",
-				"nickname",
-				"facebook",
-				"birthdate",
-				"sex",
-				"phone",
-				"email",
-				"religion",
-				"university",
-				"academicYear",
-				"faculty",
-				"department",
-				"shirtSize",
-				"disease",
-				"food",
-				"foodAllergy",
-				"medAllergy",
-				"address",
-				"blood",
-				"emergencyContactName",
-				"emergencyPhone",
-				"_id",
-			],
-			data: users,
-		}),
-	)
-	.then((data) => writeFileSync("backup.csv", data, {encoding: "utf-8"}))
-	.then(() => console.log("done"))
+  .then((users) =>
+    users.map((user) => ({
+      ...user,
+      name: `${user.firstName} ${user.lastName}`,
+      address: `${user.address} ${user.province} ${user.postalCode}`
+        .split("\n")
+        .join(" "),
+      emergencyContactName: `${user.emergencyName} (${
+        user.emergencyPhoneRelated
+      })`,
+      facebook: `https://www.facebook.com/${user.facebook}`,
+      birthdate: moment(user.birthdate).format("D MMMM YYYY"),
+    })),
+  )
+  .then((users) =>
+    Papa.unparse({
+      fields: [
+        "name",
+        "nickname",
+        "facebook",
+        "birthdate",
+        "sex",
+        "phone",
+        "email",
+        "religion",
+        "university",
+        "academicYear",
+        "faculty",
+        "department",
+        "shirtSize",
+        "disease",
+        "food",
+        "foodAllergy",
+        "medAllergy",
+        "address",
+        "blood",
+        "emergencyContactName",
+        "emergencyPhone",
+        "_id",
+      ],
+      data: users,
+    }),
+  )
+  .then((data) => writeFileSync("backup.csv", data, {encoding: "utf-8"}))
+  .then(() => console.log("done"))
 
 // const queryPromise = interviewRef =>
 //   User.find({ interviewRef })

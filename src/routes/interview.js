@@ -40,23 +40,23 @@ const router = Router()
 // });
 
 router.get("/", (req, res) => {
-	return res.send(programmingQuestion)
+  return res.send(programmingQuestion)
 })
 
 router.get(
-	"/:refId",
-	adminAuthen(["admin", "programming", "design", "marketing", "content"]),
-	async (req, res) => {
-		try {
-			const user = await User.findOne({
-				interviewRef: req.params.refId,
-			}).populate("questions")
-			if (!user) return res.error("Not found")
-			return res.send(user)
-		} catch (e) {
-			return res.error(e)
-		}
-	},
+  "/:refId",
+  adminAuthen(["admin", "programming", "design", "marketing", "content"]),
+  async (req, res) => {
+    try {
+      const user = await User.findOne({
+        interviewRef: req.params.refId,
+      }).populate("questions")
+      if (!user) return res.error("Not found")
+      return res.send(user)
+    } catch (e) {
+      return res.error(e)
+    }
+  },
 )
 // router.post('/confirm', singleUpload('slip', 'jpg', 'png', 'jpeg'), validateConfirm, confirm);
 

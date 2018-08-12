@@ -6,14 +6,14 @@ import Admin from "../src/models/admin"
 
 // connect mongodb database
 mongoose.connect(
-	process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
 )
 
 // root admin user setting
-const username = "admin";
-const password = "password";
+const username = "admin"
+const password = "password"
 
-(async () => {
+;(async () => {
   try {
     await Admin.create({
       username,
@@ -21,7 +21,7 @@ const password = "password";
       role: "admin",
     })
 
-    console.log('Create admin success!')
+    console.log("Create admin success!")
   } catch (err) {
     console.err(err)
   }

@@ -15,16 +15,16 @@ import {validator} from "./middlewares"
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 mongoose.connect(
-	process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
-	{
-		useMongoClient: true,
-	},
+  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  {
+    useMongoClient: true,
+  },
 )
 mongoose.connection.on("error", () => {
-	console.error(
-		"MongoDB Connection Error. Please make sure that MongoDB is running.",
-	)
-	process.exit(1)
+  console.error(
+    "MongoDB Connection Error. Please make sure that MongoDB is running.",
+  )
+  process.exit(1)
 })
 
 const app = express()
@@ -38,12 +38,12 @@ app.use(bodyParser.json({extended: true, limit: "6mb"}))
 app.use(bodyParser.urlencoded({extended: true, limit: "6mb"}))
 app.use(validator())
 app.use(
-	session({
-		resave: true,
-		saveUninitialized: true,
-		secret: process.env.SESSION_SECRET || "SESSION_SECRET",
-		cookie: {maxAge: 60000},
-	}),
+  session({
+    resave: true,
+    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET || "SESSION_SECRET",
+    cookie: {maxAge: 60000},
+  }),
 )
 // app.use((req, res, next) => {
 //   console.log('[' + req.path + ']', req.get('accessToken'));
@@ -58,8 +58,8 @@ app.use(flash())
 //   }
 // });
 app.use((req, res, next) => {
-	res.error = (e) => res.status(500).send(e)
-	next()
+  res.error = (e) => res.status(500).send(e)
+  next()
 })
 app.use(lusca.xframe("SAMEORIGIN"))
 app.use(lusca.xssProtection(true))

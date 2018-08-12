@@ -11,25 +11,25 @@ import question from "./static-question"
 const router = Router()
 
 const pdfOption = {
-	format: "A4",
-	border: {
-		top: "0.8in",
-		right: "0.6in",
-		bottom: "0.8in",
-		left: "0.6in",
-	},
+  format: "A4",
+  border: {
+    top: "0.8in",
+    right: "0.6in",
+    bottom: "0.8in",
+    left: "0.6in",
+  },
 }
 
 const renderName = (user) => `
   <div class="row">
     <div>
       <img class="user-img" style="background-image: url('https://api.ywc15.ywc.in.th/${
-				user.picture
-			}');" />
+        user.picture
+      }');" />
     </div>
     <div class="col" style="padding-left: 10px;">
       <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${
-	user.nickname
+  user.nickname
 })</h1>
       <h1><b>สาขา:</b> ${majorAsText(user.major)}</h1>
       <h1>Ref: M01</h1>
@@ -51,12 +51,12 @@ const renderContact = (user) => `
   <div class="col">
     <h1>ข้อมูลติดต่อ</h1>
     <p><b>ที่อยู่:</b> ${user.address} จังหวัด${user.province} ${
-	user.postalCode
+  user.postalCode
 }</p>
     <p><b>Email:</b> ${user.email}</p>
     <p><b>เบอร์ติดต่อ:</b> ${user.phone}</p>
     <p><b>ผู้ติดต่อฉุกเฉิน:</b> ${user.emergencyName} (${
-	user.emergencyPhoneRelated
+  user.emergencyPhoneRelated
 })</p>
     <p><b>เบอร์ติดต่อฉุกเฉิน:</b> ${user.emergencyPhone}</p>
   </div>
@@ -79,7 +79,7 @@ const renderMoreInfo = (user) => `
         <p><b>ศาสนา:</b> ${user.religion}</p>
         <p><b>ไซส์เสื้อ:</b> ${user.shirtSize}</p>
         <p><b>รู้จักค่ายได้ผ่านช่องทางไหน:</b> ${user.knowCamp.join(", ") ||
-					"-"}</p>
+          "-"}</p>
       </div>
       <div class="col col-3">
         <p><b>โรคประจำตัว:</b> ${user.disease || "-"}</p>
@@ -103,13 +103,13 @@ const renderGeneralQuestion = (answers) => `
   <div>
     <h1>คำถามส่วนกลาง</h1>
     ${answers.generalQuestions
-			.map(
-				(answer, idx) => `
+      .map(
+        (answer, idx) => `
       <p><b>${idx + 1}.${question.generalQuestions[idx]}</b></p>
       <p class="answer">${answer.answer}</p>
     `,
-			)
-			.join("<br>")}
+      )
+      .join("<br>")}
   </div>
 `
 
@@ -117,15 +117,15 @@ const renderMajorQuestion = (answers, major) => `
   <div>
     <h1>คำถามสาขา</h1>
     ${answers.specialQuestions[major]
-			.map(
-				(answer, idx) => `
+      .map(
+        (answer, idx) => `
       <p><b>${idx + 1}.${question.specialQuestions[major][idx]}</b></p>
       <p class="answer ${major === "programming" && idx === 3 ? "code" : ""}">${
-					answer.answer
-				}</p>
+          answer.answer
+        }</p>
     `,
-			)
-			.join("<br>")}
+      )
+      .join("<br>")}
   </div>
 `
 
@@ -202,24 +202,24 @@ const generatePdf = (user) => `
 `
 
 router.get("/interview/:id", async (req, res) => {
-	try {
-		const user = await User.findOne({
-			_id: req.params.id,
-			status: "completed",
-			isPassStageOne: true,
-			isPassStageTwo: true,
-			isPassStageThree: true,
-		}).populate("questions")
-		if (!user) return res.error("Not an interview member or User not found")
-		pdf.create(generatePdf(user), pdfOption).toStream((err, stream) => {
-			if (err) return res.error(err)
-			res.attachment(`${user.major}-${user._id}.pdf`)
-			return stream.pipe(res)
-			// return res.download(buffer);
-		})
-	} catch (e) {
-		return res.error(e)
-	}
+  try {
+    const user = await User.findOne({
+      _id: req.params.id,
+      status: "completed",
+      isPassStageOne: true,
+      isPassStageTwo: true,
+      isPassStageThree: true,
+    }).populate("questions")
+    if (!user) return res.error("Not an interview member or User not found")
+    pdf.create(generatePdf(user), pdfOption).toStream((err, stream) => {
+      if (err) return res.error(err)
+      res.attachment(`${user.major}-${user._id}.pdf`)
+      return stream.pipe(res)
+      // return res.download(buffer);
+    })
+  } catch (e) {
+    return res.error(e)
+  }
 })
 
 export default router

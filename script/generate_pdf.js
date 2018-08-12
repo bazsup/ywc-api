@@ -7,32 +7,32 @@ import "moment/locale/th"
 
 mongoose.Promise = global.Promise
 mongoose.connect(
-	process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
 )
 
 import question from "../src/routes/static-question"
 import {majorAsText} from "../src/utilities/helpers"
 
 const pdfOption = {
-	format: "A4",
-	border: {
-		top: "0.8in",
-		right: "0.6in",
-		bottom: "0.8in",
-		left: "0.6in",
-	},
+  format: "A4",
+  border: {
+    top: "0.8in",
+    right: "0.6in",
+    bottom: "0.8in",
+    left: "0.6in",
+  },
 }
 
 const renderName = (user) => `
   <div class="row">
     <div>
       <img class="user-img" style="background-image: url('https://api.ywc15.ywc.in.th/${
-				user.picture
-			}');" />
+        user.picture
+      }');" />
     </div>
     <div class="col" style="padding-left: 10px;">
       <h1>${user.title}${user.firstName} ${user.lastName} (น้อง${
-	user.nickname
+  user.nickname
 })</h1>
       <h1><b>สาขา:</b> ${majorAsText(user.major)}</h1>
       <h1>Ref: ${user.interviewRef}</h1>
@@ -54,12 +54,12 @@ const renderContact = (user) => `
   <div class="col">
     <h1>ข้อมูลติดต่อ</h1>
     <p><b>ที่อยู่:</b> ${user.address} จังหวัด${user.province} ${
-	user.postalCode
+  user.postalCode
 }</p>
     <p><b>Email:</b> ${user.email}</p>
     <p><b>เบอร์ติดต่อ:</b> ${user.phone}</p>
     <p><b>ผู้ติดต่อฉุกเฉิน:</b> ${user.emergencyName} (${
-	user.emergencyPhoneRelated
+  user.emergencyPhoneRelated
 })</p>
     <p><b>เบอร์ติดต่อฉุกเฉิน:</b> ${user.emergencyPhone}</p>
   </div>
@@ -82,7 +82,7 @@ const renderMoreInfo = (user) => `
         <p><b>ศาสนา:</b> ${user.religion}</p>
         <p><b>ไซส์เสื้อ:</b> ${user.shirtSize}</p>
         <p><b>รู้จักค่ายได้ผ่านช่องทางไหน:</b> ${user.knowCamp.join(", ") ||
-					"-"}</p>
+          "-"}</p>
       </div>
       <div class="col col-3">
         <p><b>โรคประจำตัว:</b> ${user.disease || "-"}</p>
@@ -106,15 +106,15 @@ const renderGeneralQuestion = (answers) => `
   <div>
     <h1>คำถามส่วนกลาง</h1>
     ${answers.generalQuestions
-			.map(
-				(answer, idx) => `
+      .map(
+        (answer, idx) => `
       <p class="question"><b>${idx + 1}.${
-					question.generalQuestions[idx]
-				}</b></p>
+          question.generalQuestions[idx]
+        }</b></p>
       <p class="answer">${answer.answer}</p>
     `,
-			)
-			.join("<br>")}
+      )
+      .join("<br>")}
   </div>
 `
 
@@ -122,17 +122,17 @@ const renderMajorQuestion = (answers, major) => `
   <div>
     <h1>คำถามสาขา</h1>
     ${answers.specialQuestions[major]
-			.map(
-				(answer, idx) => `
+      .map(
+        (answer, idx) => `
       <p class="question"><b>${idx + 1}.${
-					question.specialQuestions[major][idx]
-				}</b></p>
+          question.specialQuestions[major][idx]
+        }</b></p>
       <p class="answer ${major === "programming" && idx === 3 ? "code" : ""}">${
-					answer.answer
-				}</p>
+          answer.answer
+        }</p>
     `,
-			)
-			.join("<br>")}
+      )
+      .join("<br>")}
   </div>
 `
 
@@ -209,33 +209,32 @@ const generatePdf = (user) => `
 `
 
 const createPDFPromise = (user) =>
-	new Promise((resolve, reject) =>
-		pdf
-			.create(generatePdf(user), pdfOption)
-			.toFile(
-				`interview/${user.major}/${user.interviewRef}.pdf`,
-				(err, info) => {
-					if (err) return reject(err)
-					return resolve(info)
-				},
-			),
-	)
-
+  new Promise((resolve, reject) =>
+    pdf
+      .create(generatePdf(user), pdfOption)
+      .toFile(
+        `interview/${user.major}/${user.interviewRef}.pdf`,
+        (err, info) => {
+          if (err) return reject(err)
+          return resolve(info)
+        },
+      ),
+  )
 ;(async () => {
-	const users = await User.find({
-		status: "completed",
-		isPassStageOne: true,
-		isPassStageTwo: true,
-		isPassStageThree: true,
-		interviewRef: {$in: ["CT56"]},
-	})
-		.populate("questions")
-		.sort("interviewRef")
-	console.log(users.length)
-	// await createPDFPromise(users);
-	for (const user of users) {
-		await createPDFPromise(user)
-		console.log(`Done for ${user.interviewRef}`)
-	}
-	console.log("DONE")
+  const users = await User.find({
+    status: "completed",
+    isPassStageOne: true,
+    isPassStageTwo: true,
+    isPassStageThree: true,
+    interviewRef: {$in: ["CT56"]},
+  })
+    .populate("questions")
+    .sort("interviewRef")
+  console.log(users.length)
+  // await createPDFPromise(users);
+  for (const user of users) {
+    await createPDFPromise(user)
+    console.log(`Done for ${user.interviewRef}`)
+  }
+  console.log("DONE")
 })()

@@ -10,7 +10,7 @@ import Papa from "papaparse"
 
 mongoose.Promise = global.Promise
 mongoose.connect(
-	process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
 )
 
 // const backup = {
@@ -21,91 +21,91 @@ mongoose.connect(
 // };
 
 const selectedField = [
-	"firstName",
-	"lastName",
-	"nickname",
-	"facebook",
-	"birthdate",
-	"sex",
-	"phone",
-	"email",
-	"religion",
-	"university",
-	"academicYear",
-	"faculty",
-	"department",
-	"shirtSize",
-	"disease",
-	"food",
-	"foodAllergy",
-	"medAllergy",
-	"address",
-	"province",
-	"postalCode",
-	"blood",
-	"emergencyPhone",
-	"emergencyPhoneRelated",
-	"emergencyName",
+  "firstName",
+  "lastName",
+  "nickname",
+  "facebook",
+  "birthdate",
+  "sex",
+  "phone",
+  "email",
+  "religion",
+  "university",
+  "academicYear",
+  "faculty",
+  "department",
+  "shirtSize",
+  "disease",
+  "food",
+  "foodAllergy",
+  "medAllergy",
+  "address",
+  "province",
+  "postalCode",
+  "blood",
+  "emergencyPhone",
+  "emergencyPhoneRelated",
+  "emergencyName",
 ].join(" ")
 
 const queryPromise = (major) =>
-	User.find({isFinalist: true, major})
-		// Promise.all(backup[major].map(interviewRef => User.findOne({ interviewRef, major }).select('interviewRef firstName lastName').lean()))
-		// .then(users => users.reduce((prev, curr) => [...prev, curr], []))
-		.select(selectedField)
-		.sort("firstName")
-		.lean()
-		.then((users) =>
-			users.map((user) => ({
-				...user,
-				name: `${user.firstName} ${user.lastName}`,
-				address: `${user.address} ${user.province} ${user.postalCode}`
-					.split("\n")
-					.join(" "),
-				emergencyContactName: `${user.emergencyName} (${
-					user.emergencyPhoneRelated
-				})`,
-				facebook: `https://www.facebook.com/${user.facebook}`,
-				birthdate: moment(user.birthdate).format("D MMMM YYYY"),
-			})),
-		)
-		// .then((users) => writeFileSync(`finalist/${major}.json`, JSON.stringify(users)))
-		.then((users) =>
-			Papa.unparse({
-				fields: [
-					"name",
-					"nickname",
-					"facebook",
-					"birthdate",
-					"sex",
-					"phone",
-					"email",
-					"religion",
-					"university",
-					"academicYear",
-					"faculty",
-					"department",
-					"shirtSize",
-					"disease",
-					"food",
-					"foodAllergy",
-					"medAllergy",
-					"address",
-					"blood",
-					"emergencyContactName",
-					"emergencyPhone",
-					"_id",
-				],
-				data: users,
-			}),
-		)
-		.then((data) =>
-			writeFileSync(`finalist/${major}.csv`, data, {encoding: "utf-8"}),
-		)
+  User.find({isFinalist: true, major})
+    // Promise.all(backup[major].map(interviewRef => User.findOne({ interviewRef, major }).select('interviewRef firstName lastName').lean()))
+    // .then(users => users.reduce((prev, curr) => [...prev, curr], []))
+    .select(selectedField)
+    .sort("firstName")
+    .lean()
+    .then((users) =>
+      users.map((user) => ({
+        ...user,
+        name: `${user.firstName} ${user.lastName}`,
+        address: `${user.address} ${user.province} ${user.postalCode}`
+          .split("\n")
+          .join(" "),
+        emergencyContactName: `${user.emergencyName} (${
+          user.emergencyPhoneRelated
+        })`,
+        facebook: `https://www.facebook.com/${user.facebook}`,
+        birthdate: moment(user.birthdate).format("D MMMM YYYY"),
+      })),
+    )
+    // .then((users) => writeFileSync(`finalist/${major}.json`, JSON.stringify(users)))
+    .then((users) =>
+      Papa.unparse({
+        fields: [
+          "name",
+          "nickname",
+          "facebook",
+          "birthdate",
+          "sex",
+          "phone",
+          "email",
+          "religion",
+          "university",
+          "academicYear",
+          "faculty",
+          "department",
+          "shirtSize",
+          "disease",
+          "food",
+          "foodAllergy",
+          "medAllergy",
+          "address",
+          "blood",
+          "emergencyContactName",
+          "emergencyPhone",
+          "_id",
+        ],
+        data: users,
+      }),
+    )
+    .then((data) =>
+      writeFileSync(`finalist/${major}.csv`, data, {encoding: "utf-8"}),
+    )
 
 Promise.all([
-	queryPromise("programming"),
-	queryPromise("design"),
-	queryPromise("marketing"),
-	queryPromise("content"),
+  queryPromise("programming"),
+  queryPromise("design"),
+  queryPromise("marketing"),
+  queryPromise("content"),
 ]).then(() => console.log("done"))

@@ -1,10 +1,10 @@
 import {Router} from "express"
 import {
-	result,
-	getVote,
-	postVoteBoy,
-	postVoteGirl,
-	postVoteSpecial,
+  result,
+  getVote,
+  postVoteBoy,
+  postVoteGirl,
+  postVoteSpecial,
 } from "../controllers/member"
 
 const router = Router()

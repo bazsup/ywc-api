@@ -59,38 +59,38 @@ const router = Router()
 //   });
 // });
 router.get("/", adminAuthen("admin"), async (req, res) => {
-	try {
-		const adminUsers = await Admin.find()
-		return res.send(adminUsers)
-	} catch (err) {
-		return res.error(err)
-	}
+  try {
+    const adminUsers = await Admin.find()
+    return res.send(adminUsers)
+  } catch (err) {
+    return res.error(err)
+  }
 })
 
 router.post("/", adminAuthen("admin"), async (req, res) => {
-	try {
-		await Admin.create({
-			username: req.body.username,
-			password: bcrypt.hashSync(req.body.password, 10),
-			role: req.body.role,
-		})
-		return res.send({success: true})
-	} catch (err) {
-		return res.error(err)
-	}
+  try {
+    await Admin.create({
+      username: req.body.username,
+      password: bcrypt.hashSync(req.body.password, 10),
+      role: req.body.role,
+    })
+    return res.send({success: true})
+  } catch (err) {
+    return res.error(err)
+  }
 })
 
 router.get("/me", adminAuthen("any"), (req, res) => {
-	res.send(req.admin)
+  res.send(req.admin)
 })
 
 router.delete("/:id", adminAuthen("admin"), async (req, res) => {
-	try {
-		await Admin.remove({_id: req.params.id})
-		return res.send({success: true})
-	} catch (e) {
-		return res.error(e)
-	}
+  try {
+    await Admin.remove({_id: req.params.id})
+    return res.send({success: true})
+  } catch (e) {
+    return res.error(e)
+  }
 })
 
 // router.get('/:id', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {

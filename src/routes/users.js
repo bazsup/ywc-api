@@ -2,7 +2,6 @@ import {Router} from "express"
 import moment from "moment"
 import {authen, adminAuthen} from "../middlewares/authenticator"
 import {User} from "../models"
-// import slackUtils from '../utilities/slack';
 
 const router = Router()
 

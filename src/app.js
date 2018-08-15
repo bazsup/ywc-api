@@ -9,7 +9,9 @@ import mongoose from "mongoose"
 import cors from "cors"
 import config from "config"
 import routes from "./routes"
-import {validator, errorHandler} from "./middlewares"
+
+import {validator} from "./middlewares/validator"
+import {errorHandler} from "./middlewares/error"
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 

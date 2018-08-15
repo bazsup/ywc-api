@@ -1,34 +1,18 @@
 import jwt from "jsonwebtoken"
 import config from "config"
+import VError from "verror"
+
 import {User, Admin} from "../models"
-import {respondErrors} from "../utils"
 
-// export const authenticator = (req, res, next) => {
-//   next();
-// };
-
-// export const isAuthenticated = async (req, res, next) => {
-//   try {
-//     // const { facebook } = req.session;
-//     const accessToken = req.get('accessToken');
-//     const facebook = (await getUserInfoFromToken(accessToken)).id;
-//     req.facebook = facebook;
-//     const user = await User.findOne({ facebook }).populate('questions');
-//     if (user) {
-//       req.user = user;
-//       next();
-//     } else {
-//       respondErrors(res)({ code: 403, message: 'Forbidden' });
-//     }
-//   } catch (err) {
-//     respondErrors(res)(err);
-//   }
-// };
 export const authen = (type = "any") => async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"]
     const user = jwt.verify(token, config.JWT_SECRET)
-    if (!user) return respondErrors(res)("Not Authorize")
+
+    if (!user) {
+      return next(new Error("not authorized"))
+    }
+
     const userObj = await User.findOne({_id: user._id})
     if (
       type === "any" ||
@@ -38,9 +22,10 @@ export const authen = (type = "any") => async (req, res, next) => {
       req.user = user
       return next()
     }
-    return res.error("Not Authorize")
+
+    return next(new Error("not authorized"))
   } catch (e) {
-    return respondErrors(res)(e)
+    return next(new VError(e, "authen middlewares: on %s", req.originalUrl))
   }
 }
 

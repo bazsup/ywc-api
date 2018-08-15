@@ -6,17 +6,13 @@ export const validator = () =>
   expressValidator({
     customValidators: {
       isArray: (target) => _.isArray(target),
-      isString: (target) => _.isString(target),
       isMajor: (target) =>
         _.includes(["programming", "design", "content", "marketing"], target),
-      arraySize: (target, lower, upper) =>
-        target.length >= lower && target.length <= upper,
     },
   })
 
 export const validateRegistrationStep = [
   (req, res, next) => {
-    // STEP 1 Form Validation
     req.checkBody("title", "Invalid").notEmpty()
     req.checkBody("firstName", "Invalid").notEmpty()
     req.checkBody("lastName", "Invalid").notEmpty()
@@ -46,9 +42,7 @@ export const validateRegistrationStep = [
     req.sanitizeBody("blood").toString()
 
     if (!moment(req.body.birthdate).isValid()) {
-      return res
-        .status(400)
-        .json([{param: "birthdate", msg: "Invalid", value: req.body.birthdate}])
+      return next(new Error("invalid birthdate"))
     }
 
     req.body.birthdate = moment.utc(req.body.birthdate).toDate()
@@ -147,35 +141,3 @@ export const validateRegistrationStep = [
     return next()
   },
 ]
-
-export const majorQuestionValidator = (req, res, next) => {
-  const {major} = req.body
-  req.checkBody("answers", "Invalid").isArray()
-
-  const errors = req.validationErrors()
-  if (errors) return res.status(400).send(errors)
-  if (req.body.answers.filter((x) => !x).length !== 0) {
-    return res.status(400).send([
-      {
-        msg: "Invalid",
-        param: "answers",
-        value: [],
-      },
-    ])
-  }
-  return next()
-}
-
-export const hasFile = (req, res, next) => {
-  if (!req.file) res.status(400).send({code: 400, message: "require file"})
-  else next()
-}
-
-export const validateConfirm = (req, res, next) => {
-  req.checkBody("major", "Invalid major").notEmpty()
-  req.sanitizeBody("major").toString()
-
-  const errors = req.validationErrors()
-  if (errors) return res.status(400).send(errors)
-  return next()
-}

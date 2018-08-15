@@ -46,9 +46,11 @@ router.post("/login", closeAfterDeadline, async (req, res, next) => {
       config.JWT_SECRET,
     )
 
-    return res.json(createJsonResponse("success", {
-      token,
-    }))
+    return res.json(
+      createJsonResponse("success", {
+        token,
+      }),
+    )
   } catch (e) {
     return next(new VError(e, "/login"))
   }

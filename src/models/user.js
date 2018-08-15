@@ -3,11 +3,12 @@ const {Schema} = mongoose
 const {ObjectId} = Schema.Types
 
 const schema = new Schema({
-  __v: {type: Number, select: false},
   facebook: String,
-  status: String,
+  status: {
+    type: String,
+    enum: ["in progress", "completed"],
+  },
   questions: {type: ObjectId, ref: "Question"},
-  completed: [Boolean], // Mark boolean to check that user has done each step,
   completed_at: Date,
   // Step 1: user information
   title: {

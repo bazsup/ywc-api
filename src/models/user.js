@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+
 const {Schema} = mongoose
 const {ObjectId} = Schema.Types
 
@@ -65,63 +66,17 @@ const schema = new Schema({
   med: String,
   foodAllergy: String,
   medAllergy: String,
-  skype: String,
+  otherContact: String,
   // Step 3: ywc insight
   knowCamp: [String],
   activities: String,
-  knowCampAnother: {type: String, required: false},
   whyJoinYwc: String,
   expectation: String,
 
-  designPortfolio: String,
   major: {
     type: String,
     enum: ["content", "programming", "design", "marketing"],
   },
-
-  line: String,
-  interview: String,
-  homework: [{question: String, answer: String, upload_url: String}],
-  idInterview: {type: String, required: false},
-  interview_time: String,
-  confirm_interview: Boolean,
-  prominentPoint: String,
-  event: String,
-  portfolio: String,
-  portfolioUrl: String,
-  answerFile: String,
-  picture: String,
-  updated_at: Date,
-  no: String,
-  transfer_money: String,
-  slips: [String],
-
-  // Grading stage
-  isPassStageOne: {
-    type: Boolean,
-    default: false,
-  },
-  isJudgeStageTwo: {
-    type: Boolean,
-    default: false,
-  },
-  isPassStageTwo: {
-    type: Boolean,
-    default: false,
-  },
-  noteStageTwo: String,
-  isJudgeMajorQuestion: {
-    type: Boolean,
-    default: false,
-  },
-  isPassStageThree: {
-    type: Boolean,
-    default: false,
-  },
-  grader_id: {type: ObjectId, ref: "Admin"},
-  interviewRef: String,
-  isFinalist: Boolean,
-  isFinalistBackup: Boolean,
 })
 
 export default mongoose.model("User", schema)

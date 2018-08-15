@@ -37,3 +37,6 @@ A backend API services that use for YWC registration. Reuse code from YWC#14
 ```
 npm install babel-polypill babel-runtime bluebird —save
 ```
+
+### Routes
+- `/auth/login` `method: post` - login with facebook access token

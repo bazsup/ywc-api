@@ -1,18 +1,18 @@
-export const emptyValidator = fields => (req, res, next) => {
-    fields.forEach((field) => {
-      req.checkBody(field, `${field} can't be empty`).notEmpty()
-    })
+export const emptyValidator = (fields) => (req, res, next) => {
+  fields.forEach((field) => {
+    req.checkBody(field, `${field} can't be empty`).notEmpty()
+  })
 
-    fields.forEach((field) => {
-      req.sanitizeBody(field).toString()
-    })
+  fields.forEach((field) => {
+    req.sanitizeBody(field).toString()
+  })
 
-    const errors = req.validationErrors()
+  const errors = req.validationErrors()
 
-    if (errors) {
-      return next(new Error(errors[0].msg))
-    }
+  if (errors) {
+    return next(new Error(errors[0].msg))
+  }
 
-    req.fields = fields
-    return next()
+  req.fields = fields
+  return next()
 }

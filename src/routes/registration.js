@@ -26,7 +26,9 @@ router.put(
       return next(new Error("major can't be empty"))
     }
 
-    if (["programming", "design", "content", "marketing"].indexOf(major) === -1) {
+    if (
+      ["programming", "design", "content", "marketing"].indexOf(major) === -1
+    ) {
       return next(new VError("invalid major: got %s", major))
     }
 
@@ -135,10 +137,7 @@ router.put(
   "/insight",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
-  emptyValidator([
-    "knowCamp",
-    "activities",
-  ]),
+  emptyValidator(["knowCamp", "activities"]),
   async (req, res, next) => {
     try {
       const {_id} = req.user

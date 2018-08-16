@@ -39,4 +39,15 @@ npm install babel-polypill babel-runtime bluebird —save
 ```
 
 ### Routes
-- `/auth/login` `method: post` - login with facebook access token
+
+#### Authentication
+- `/auth/login` `method: post` - user login with facebook
+
+#### Registration
+- `/registration/major` `method: put` - set user major
+- `/registration/info` `method: put` - save personal information
+- `/registration/contact` `method: put` - save contact information
+- `/registration/insight` `method: put` - save insight (know camp?, activities)
+- `/registration/general` `method: put` - save general answers
+- `/registration/special` `method: put` - save special-major answers
+- `/registration/confirm` `method: post` - confirm registration

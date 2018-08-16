@@ -119,14 +119,8 @@ export const validateRegistrationStep = [
     return next()
   },
   (req, res, next) => {
-    req
-      .checkBody("major", "Invalid role")
-      .notEmpty()
-      .isMajor()
-    req.sanitizeBody("major").toString()
-    // req.checkBody('answers', 'Invalid').isArray();
-    const errors = req.validationErrors()
-    if (errors) return res.status(400).send(errors)
+    // const errors = req.validationErrors()
+    // if (errors) return res.status(400).send(errors)
     return next()
   },
   (req, res, next) => {

@@ -23,7 +23,7 @@ router.put(
     }
 
     if (["programming", "design", "content", "marketing"].indexOf(major) === -1) {
-      return next(new VError("invalid major got %s", major))
+      return next(new VError("invalid major: got %s", major))
     }
 
     try {
@@ -176,13 +176,14 @@ router.put(
       const {answers} = req.body
       const {_id} = req.user
 
-      const user = await User.findOne({_id}).select("questions")
+      const user = await User.findOne({_id}).select("questions major")
       const question = await Question.findOne({_id: user.questions})
 
       if (!user.major) {
         return next(new Error("major is not selected"))
       }
 
+      question.confirmedMajor = user.major
       question.majorQuestions = answers.map((answer) => ({answer}))
 
       await question.save()
@@ -204,7 +205,14 @@ router.post(
       const user = await User.findOne({_id}).populate("questions")
       const question = await Question.findOne({_id: user.questions._id})
 
-      question.confirmedMajor = user.major
+      if (!user.major) {
+        return next(new Error("major is not selected"))
+      }
+
+      if (user.major !== question.confirmedMajor) {
+        return next(new Error("major questions are not submited"))
+      }
+
       user.status = ROLE_COMPLETED
       user.completed_at = new Date()
 

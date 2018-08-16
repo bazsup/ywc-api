@@ -1,168 +1,223 @@
 import {Router} from "express"
-import {authen} from "../middlewares/authenticator"
-import {
-  validateRegistrationStep,
-  majorQuestionValidator,
-} from "../middlewares/validator"
-import {User, Question} from "../models"
-import {singleUpload} from "../middlewares"
-import {closeAfterDeadline} from "../middlewares/deadline"
+import VError from "verror"
+import moment from "moment"
+import {isArray} from "lodash"
+import EmailValidator from "email-validator"
 
-const updateRegisterStep = async (id, step) => {
-  const user = await User.findOne({_id: id})
-  user.completed[step - 1] = true
-  user.markModified("completed")
-  return await user.save()
-}
+import {createJsonResponse} from "../utils/helpers"
+import {authen} from "../middlewares/authenticator"
+import {closeAfterDeadline} from "../middlewares/deadline"
+import {emptyValidator} from "../middlewares/validator"
+import {ROLE_IN_PROGRESS, ROLE_COMPLETED} from "../utils/const"
+import {User, Question} from "../models"
+import {generalQuestionSize, majorQuestionSize} from "../config"
 
 const router = Router()
 
-// STEP 1: Personal Info
 router.put(
-  "/step1",
+  "/major",
   closeAfterDeadline,
-  authen("in progress"),
-  validateRegistrationStep[0],
-  async (req, res) => {
+  authen(ROLE_IN_PROGRESS),
+  async (req, res, next) => {
+    const {_id} = req.user
+    const {major} = req.body
+
+    if (!major) {
+      return next(new Error("major can't be empty"))
+    }
+
+    if (
+      ["programming", "design", "content", "marketing"].indexOf(major) === -1
+    ) {
+      return next(new VError("invalid major: got %s", major))
+    }
+
     try {
-      const {_id} = req.user
       const user = await User.findOne({_id})
-      const fields = [
-        "title",
-        "firstName",
-        "lastName",
-        "firstNameEN",
-        "lastNameEN",
-        "nickname",
-        "faculty",
-        "department",
-        "academicYear",
-        "university",
-        "sex",
-        "birthdate",
-        "religion",
-        "blood",
-        "picture",
-      ]
-      fields.forEach((field) => {
-        user[field] = req.body[field]
-      })
-      await Promise.all([user.save(), updateRegisterStep(_id, 1)])
-      return res.send({success: true})
+      user.major = major
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
     } catch (e) {
-      return res.error(e)
+      return next(new VError(e, "/registration/major"))
     }
   },
 )
 
-// STEP 2: Contact Info and ETC
 router.put(
-  "/step2",
+  "/info",
   closeAfterDeadline,
-  authen("in progress"),
-  validateRegistrationStep[1],
-  async (req, res) => {
+  authen(ROLE_IN_PROGRESS),
+  emptyValidator([
+    "title",
+    "firstName",
+    "lastName",
+    "firstNameEN",
+    "lastNameEN",
+    "nickname",
+    "faculty",
+    "department",
+    "academicYear",
+    "university",
+    "sex",
+    "birthdate",
+    "religion",
+    "blood",
+    "picture",
+  ]),
+  async (req, res, next) => {
+    if (!moment(req.body.birthdate).isValid()) {
+      return next(new Error("invalid birthdate"))
+    }
+
+    req.body.birthdate = moment.utc(req.body.birthdate).toDate()
+
     try {
       const {_id} = req.user
       const user = await User.findOne({_id})
-      const fields = [
-        "address",
-        "province",
-        "postalCode",
-        "email",
-        "phone",
-        "emergencyPhone",
-        "emergencyPhoneRelated",
-        "emergencyName",
-        "shirtSize",
-        "food",
-        "disease",
-        "med",
-        "foodAllergy",
-        "medAllergy",
-        "skype",
-      ]
-      fields.forEach((field) => {
+
+      req.fields.forEach((field) => {
         user[field] = req.body[field]
       })
-      await Promise.all([user.save(), updateRegisterStep(_id, 2)])
-      return res.send({success: true})
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
     } catch (e) {
-      return res.error(e)
+      return next(new VError(e, "/registration/info"))
     }
   },
 )
 
-// STEP 3: Portfolio and How did you know YWC?
 router.put(
-  "/step3",
+  "/contact",
   closeAfterDeadline,
-  authen("in progress"),
-  validateRegistrationStep[2],
-  async (req, res) => {
+  authen(ROLE_IN_PROGRESS),
+  emptyValidator([
+    "address",
+    "province",
+    "postalCode",
+    "email",
+    "phone",
+    "emergencyPhone",
+    "emergencyPhoneRelated",
+    "emergencyName",
+    "shirtSize",
+    "food",
+    "disease",
+    "med",
+    "foodAllergy",
+    "medAllergy",
+    "otherContact",
+  ]),
+  async (req, res, next) => {
+    if (!EmailValidator.validate(req.body.email)) {
+      return next(new Error("invalid email format"))
+    }
+
     try {
       const {_id} = req.user
       const user = await User.findOne({_id})
-      const fields = ["knowCamp", "activities"]
-      fields.forEach((field) => {
+
+      req.fields.forEach((field) => {
         user[field] = req.body[field]
       })
-      await Promise.all([user.save(), updateRegisterStep(_id, 3)])
-      return res.send({success: true})
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
     } catch (e) {
-      return res.error(e)
+      return next(new VError(e, "/registration/contact"))
     }
   },
 )
 
-// STEP 4: General Question
 router.put(
-  "/step4",
+  "/insight",
   closeAfterDeadline,
-  authen("in progress"),
-  validateRegistrationStep[3],
-  async (req, res) => {
+  authen(ROLE_IN_PROGRESS),
+  emptyValidator(["knowCamp", "activities"]),
+  async (req, res, next) => {
     try {
-      // TO CHECK: If role as affect on general question -> check role
+      const {_id} = req.user
+      const user = await User.findOne({_id})
+
+      req.fields.forEach((field) => {
+        user[field] = req.body[field]
+      })
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
+    } catch (e) {
+      return next(new VError(e, "/registration/insight"))
+    }
+  },
+)
+
+router.put(
+  "/general",
+  closeAfterDeadline,
+  authen(ROLE_IN_PROGRESS),
+  async (req, res, next) => {
+    if (!isArray(req.body.answers)) {
+      return next(new Error("answers is not the array"))
+    }
+
+    if (req.body.answers.length !== generalQuestionSize) {
+      return next(new Error("invalid array size"))
+    }
+
+    try {
       const {answers} = req.body
       const {_id} = req.user
+
       const user = await User.findOne({_id}).select("questions")
       const questions = await Question.findOne({_id: user.questions})
+
       questions.generalQuestions = answers.map((answer) => ({answer}))
-      await Promise.all([questions.save(), updateRegisterStep(_id, 4)])
-      return res.send({success: true})
+      await questions.save()
+
+      return res.send(createJsonResponse("success"))
     } catch (e) {
-      return res.error(e)
+      return next(new VError(e, "/registration/general"))
     }
   },
 )
 
-// STEP 5: Major Question
 router.put(
-  "/step5",
+  "/special",
   closeAfterDeadline,
-  authen("in progress"),
-  validateRegistrationStep[4],
-  majorQuestionValidator,
-  async (req, res) => {
+  authen(ROLE_IN_PROGRESS),
+  async (req, res, next) => {
+    if (!isArray(req.body.answers)) {
+      return next(new Error("answers is not the array"))
+    }
+
     try {
-      const {answers, major} = req.body
+      const {answers} = req.body
       const {_id} = req.user
-      const user = await User.findOne({_id}).select("questions")
+
+      const user = await User.findOne({_id}).select("questions major")
       const question = await Question.findOne({_id: user.questions})
-      // mapping answers
-      question.specialQuestions[major] = answers.map((answer) => ({answer}))
-      if (question.completedMajor.indexOf(major) === -1) {
-        question.completedMajor.push(major)
+
+      if (!user.major) {
+        return next(new Error("major is not selected"))
       }
-      await Promise.all([
-        question.save(),
-        user.save(),
-        updateRegisterStep(_id, 5),
-      ])
-      return res.send({success: true})
+
+      if (answers.length !== majorQuestionSize[user.major]) {
+        return next(new Error("invalid array size"))
+      }
+
+      question.confirmedMajor = user.major
+      question.majorQuestions = answers.map((answer) => ({answer}))
+
+      await question.save()
+
+      return res.send(createJsonResponse("success"))
     } catch (e) {
-      return res.error(e)
+      return next(new VError(e, "/registration/major"))
     }
   },
 )
@@ -170,31 +225,29 @@ router.put(
 router.post(
   "/confirm",
   closeAfterDeadline,
-  authen("in progress"),
-  async (req, res) => {
+  authen(ROLE_IN_PROGRESS),
+  async (req, res, next) => {
     try {
       const {_id} = req.user
       const user = await User.findOne({_id}).populate("questions")
-      if (user.completed.filter((isDone) => !isDone).length !== 0) {
-        return res.error("Non completed registration form.")
-      }
-      const {major} = req.body
-      if (user.questions.completedMajor.indexOf(major) === -1) {
-        return res.error("You did not completed major questions yet.")
-      }
-      const majorSpecialQuestions = user.questions.specialQuestions[major]
       const question = await Question.findOne({_id: user.questions._id})
-      question.specialQuestions = {
-        [major]: majorSpecialQuestions,
+
+      if (!user.major) {
+        return next(new Error("major is not selected"))
       }
-      question.confirmedMajor = major
-      user.status = "completed"
-      user.major = req.body.major
+
+      if (user.major !== question.confirmedMajor) {
+        return next(new Error("major questions are not submited"))
+      }
+
+      user.status = ROLE_COMPLETED
       user.completed_at = new Date()
+
       await Promise.all([user.save(), question.save()])
-      return res.send({success: true})
+
+      return res.send(createJsonResponse("success"))
     } catch (e) {
-      return res.error(e)
+      return next(new VError(e, "/registration/confirm"))
     }
   },
 )

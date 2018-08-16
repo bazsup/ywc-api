@@ -5,7 +5,6 @@ import VError from "verror"
 import {pick} from "lodash"
 
 import {User, Question} from "../models"
-import {isAuthenticated} from "../middlewares"
 import {closeAfterDeadline} from "../middlewares/deadline"
 import {createJsonResponse, getFacebookUser} from "../utils"
 

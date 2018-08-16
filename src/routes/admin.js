@@ -2,7 +2,7 @@ import {Router} from "express"
 import bcrypt from "bcrypt"
 
 import {adminAuthen} from "../middlewares/authenticator"
-import {requireRoles, adminAuthorize} from "../middlewares"
+import {requireRoles, adminAuthorize} from "../middlewares/admin"
 import {respondResult, respondSuccess, respondErrors} from "../utils"
 import {Admin} from "../models"
 

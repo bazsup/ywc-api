@@ -1,12 +1,16 @@
 import {Router} from "express"
 import VError from "verror"
+import moment from "moment"
+import {isArray} from "lodash"
+import EmailValidator from "email-validator"
 
 import {createJsonResponse} from "../utils/helpers"
 import {authen} from "../middlewares/authenticator"
 import {closeAfterDeadline} from "../middlewares/deadline"
-import {validateRegistrationStep} from "../middlewares/validator"
+import {emptyValidator} from "../middlewares/validator"
 import {ROLE_IN_PROGRESS, ROLE_COMPLETED} from "../utils/const"
 import {User, Question} from "../models"
+import {generalQuestionSize, majorQuestionSize} from "../config"
 
 const router = Router()
 
@@ -43,30 +47,35 @@ router.put(
   "/info",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
-  validateRegistrationStep[0],
+  emptyValidator([
+    "title",
+    "firstName",
+    "lastName",
+    "firstNameEN",
+    "lastNameEN",
+    "nickname",
+    "faculty",
+    "department",
+    "academicYear",
+    "university",
+    "sex",
+    "birthdate",
+    "religion",
+    "blood",
+    "picture",
+  ]),
   async (req, res, next) => {
+    if (!moment(req.body.birthdate).isValid()) {
+      return next(new Error("invalid birthdate"))
+    }
+
+    req.body.birthdate = moment.utc(req.body.birthdate).toDate()
+
     try {
       const {_id} = req.user
       const user = await User.findOne({_id})
-      const fields = [
-        "title",
-        "firstName",
-        "lastName",
-        "firstNameEN",
-        "lastNameEN",
-        "nickname",
-        "faculty",
-        "department",
-        "academicYear",
-        "university",
-        "sex",
-        "birthdate",
-        "religion",
-        "blood",
-        "picture",
-      ]
 
-      fields.forEach((field) => {
+      req.fields.forEach((field) => {
         user[field] = req.body[field]
       })
 
@@ -83,30 +92,33 @@ router.put(
   "/contact",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
-  validateRegistrationStep[1],
+  emptyValidator([
+    "address",
+    "province",
+    "postalCode",
+    "email",
+    "phone",
+    "emergencyPhone",
+    "emergencyPhoneRelated",
+    "emergencyName",
+    "shirtSize",
+    "food",
+    "disease",
+    "med",
+    "foodAllergy",
+    "medAllergy",
+    "otherContact",
+  ]),
   async (req, res, next) => {
+    if (!EmailValidator.validate(req.body.email)) {
+      return next(new Error("invalid email format"))
+    }
+
     try {
       const {_id} = req.user
       const user = await User.findOne({_id})
-      const fields = [
-        "address",
-        "province",
-        "postalCode",
-        "email",
-        "phone",
-        "emergencyPhone",
-        "emergencyPhoneRelated",
-        "emergencyName",
-        "shirtSize",
-        "food",
-        "disease",
-        "med",
-        "foodAllergy",
-        "medAllergy",
-        "otherContact",
-      ]
 
-      fields.forEach((field) => {
+      req.fields.forEach((field) => {
         user[field] = req.body[field]
       })
 
@@ -123,14 +135,16 @@ router.put(
   "/insight",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
-  validateRegistrationStep[2],
+  emptyValidator([
+    "knowCamp",
+    "activities",
+  ]),
   async (req, res, next) => {
     try {
       const {_id} = req.user
       const user = await User.findOne({_id})
-      const fields = ["knowCamp", "activities"]
 
-      fields.forEach((field) => {
+      req.fields.forEach((field) => {
         user[field] = req.body[field]
       })
 
@@ -147,8 +161,15 @@ router.put(
   "/general",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
-  validateRegistrationStep[3],
   async (req, res, next) => {
+    if (!isArray(req.body.answers)) {
+      return next(new Error("answers is not the array"))
+    }
+
+    if (req.body.answers.length !== generalQuestionSize) {
+      return next(new Error("invalid array size"))
+    }
+
     try {
       const {answers} = req.body
       const {_id} = req.user
@@ -170,8 +191,11 @@ router.put(
   "/special",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
-  validateRegistrationStep[4],
   async (req, res, next) => {
+    if (!isArray(req.body.answers)) {
+      return next(new Error("answers is not the array"))
+    }
+
     try {
       const {answers} = req.body
       const {_id} = req.user
@@ -181,6 +205,10 @@ router.put(
 
       if (!user.major) {
         return next(new Error("major is not selected"))
+      }
+
+      if (answers.length !== majorQuestionSize[user.major]) {
+        return next(new Error("invalid array size"))
       }
 
       question.confirmedMajor = user.major

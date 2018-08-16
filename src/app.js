@@ -8,9 +8,9 @@ import flash from "express-flash"
 import mongoose from "mongoose"
 import cors from "cors"
 import config from "config"
-import routes from "./routes"
+import expressValidator from "express-validator"
 
-import {validator} from "./middlewares/validator"
+import routes from "./routes"
 import {errorHandler} from "./middlewares/error"
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
@@ -37,7 +37,7 @@ app.use(compression())
 app.use(logger("dev"))
 app.use(bodyParser.json({extended: true, limit: "6mb"}))
 app.use(bodyParser.urlencoded({extended: true, limit: "6mb"}))
-app.use(validator())
+app.use(expressValidator())
 app.use(
   session({
     resave: true,

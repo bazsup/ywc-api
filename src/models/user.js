@@ -70,8 +70,6 @@ const schema = new Schema({
   // Step 3: ywc insight
   knowCamp: [String],
   activities: String,
-  whyJoinYwc: String,
-  expectation: String,
 
   major: {
     type: String,

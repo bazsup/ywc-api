@@ -11,6 +11,35 @@ import {User, Question} from "../models"
 const router = Router()
 
 router.put(
+  "/major",
+  closeAfterDeadline,
+  authen(ROLE_IN_PROGRESS),
+  async (req, res, next) => {
+    const {_id} = req.user
+    const {major} = req.body
+
+    if (!major) {
+      return next(new Error("major can't be empty"))
+    }
+
+    if (["programming", "design", "content", "marketing"].indexOf(major) === -1) {
+      return next(new VError("invalid major got %s", major))
+    }
+
+    try {
+      const user = await User.findOne({_id})
+      user.major = major
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
+    } catch (e) {
+      return next(new VError(e, "/registration/major"))
+    }
+  },
+)
+
+router.put(
   "/info",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
@@ -138,7 +167,7 @@ router.put(
 )
 
 router.put(
-  "/major",
+  "/special",
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
   validateRegistrationStep[4],

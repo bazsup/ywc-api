@@ -2,6 +2,29 @@
 
 A backend API services that use for YWC registration. Reuse code from YWC#14
 
+## Step of registration
+1. คนตรวจคำถามกลาง สแกนตรวจคำถามกลางจากผู้สมัครทั้งหมด (ผ่าน/ไม่ผ่าน)
+2. คนตรวจคำถามสาขา ตรวจคำถามสาขาทั้งหมด (ผ่าน/ไม่ผ่าน)
+
+## User validation 
+1. กรรมการคำถามกลาง
+    - สาขาผู้สมัคร
+    - ชั้นปี
+    - อายุ
+    - เพศ
+    - คำตอบของคำถามกลาง
+
+  2. กรรมการ
+      - เห็นทุกอย่างของกรรมการคำถามกลาง
+      - กิจกรรมที่ผ่านมา / ผลงาน
+      - คำตอบคำถามสาขา
+  3. Admin 
+      - เห็น Stat ของระบบ (จำนวณผู้กด Login ทั้งหมด/กรอกประวัติเสร็จ/กรอกคำถามกลางเสร็จ/กรอกคำถามเสร็จทั้งหมด/สมัครเสร็จสิ้น)
+      - View ประวัติของน้อง ที่สมัครอยู่แต่ละ state ของระบบ
+  4. Super Admin
+      - ทำได้ทุกอย่างที่ User ทุก role ทำได้
+      - แก้ไขผลตรวจ จากผ่าน เป็นไม่ผ่านได้
+
 ## Getting Started
 - run command `npm install` for install packages and dependencies
 - config your application `config/default.json` for default config

@@ -1,7 +1,9 @@
 import {Router} from "express"
 import moment from "moment"
-import {authen, adminAuthen} from "../middlewares/authenticator"
+
 import {User} from "../models"
+import {createJsonResponse} from "../utils/helpers"
+import {authen, adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
 
@@ -13,13 +15,15 @@ router.get("/", adminAuthen("admin"), async (req, res) => {
   return res.send(users)
 })
 
-// get my user information and questions
-router.get("/me", authen(), async (req, res) => {
+// get user information and questions from access token
+router.get("/me", authen(), async (req, res, next) => {
   const user = await User.findOne({_id: req.user._id}).populate("questions")
+
   if (!user) {
-    return res.error("User Not Found")
+    return next(new Error("user not found"))
   }
-  return res.send(user)
+
+  return res.send(createJsonResponse("success", user))
 })
 
 // show completed-user stat

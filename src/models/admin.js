@@ -5,20 +5,18 @@ const schema = new Schema({
   __v: {type: Number, select: false},
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true, select: false},
+  major: {
+    type: String,
+    enum: ["content", "programming", "design", "marketing"],
+  },
   role: {
     type: String,
     required: true,
     enum: [
+      "staff",
+      "committee",
       "admin",
-      "programming",
-      "design",
-      "content",
-      "marketing",
-      "stage-1",
-      "stage-2",
-      "queue",
-      "slips",
-      "score",
+      "manager",
     ],
   },
 })

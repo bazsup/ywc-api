@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
 
 const {Schema} = mongoose
-const {ObjectId} = Schema.Types
 import _ from "lodash"
 
 const answerSchema = new Schema({

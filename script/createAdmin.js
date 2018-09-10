@@ -12,14 +12,14 @@ mongoose.connect(
 )
 
 // root admin user setting
-const username = "admin"
-const password = "password"
+const username = "chunza2542"
+const password = "482073"
 ;(async () => {
   try {
     await Admin.create({
       username,
       password: bcrypt.hashSync(password, 10),
-      role: "admin",
+      role: "manager",
     })
 
     console.log("Create admin success!")

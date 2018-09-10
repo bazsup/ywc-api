@@ -11,6 +11,7 @@ const schema = new Schema({
   },
   questions: {type: ObjectId, ref: "Question"},
   completed_at: Date,
+
   // Step 1: user information
   title: {
     type: String,
@@ -51,6 +52,7 @@ const schema = new Schema({
     enum: ["A", "B", "O", "AB"],
   },
   age: Number,
+
   // Step 2: contact information
   address: String,
   province: String,
@@ -67,6 +69,7 @@ const schema = new Schema({
   foodAllergy: String,
   medAllergy: String,
   otherContact: String,
+
   // Step 3: ywc insight
   knowCamp: [String],
   activities: String,
@@ -75,6 +78,17 @@ const schema = new Schema({
     type: String,
     enum: ["content", "programming", "design", "marketing"],
   },
+
+  // grading system
+  isPassStaff: Boolean,
+  staffComment: String,
+
+  // reference to admin model (store comiitee object id)
+  committeeVote: [ObjectId],
+  committeeComment: String,
+
+  // is user pass to interview
+  passInterview: Boolean,
 })
 
 export default mongoose.model("User", schema)

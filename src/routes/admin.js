@@ -1,9 +1,10 @@
 import {Router} from "express"
 import bcrypt from "bcrypt"
 
+import {respondError} from "../middlewares/error"
 import {adminAuthen} from "../middlewares/authenticator"
-import {requireRoles, adminAuthorize} from "../middlewares/admin"
-import {respondResult, respondSuccess, respondErrors} from "../utils"
+// import {requireRoles, adminAuthorize} from "../middlewares/admin"
+// import {respondResult, respondSuccess, respondErrors} from "../utils"
 import {Admin} from "../models"
 
 const router = Router()

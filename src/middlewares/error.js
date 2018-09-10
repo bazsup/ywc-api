@@ -11,7 +11,7 @@ const logger = winston.createLogger({
 })
 
 // response error message without log
-export const responseError = (message, res) => {
+export const responseError = (res, message) => {
   res.status(500)
   res.json(createJsonResponse("error", {message}))
 }

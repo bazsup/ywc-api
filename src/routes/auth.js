@@ -56,6 +56,41 @@ router.post("/login", closeAfterDeadline, async (req, res, next) => {
   }
 })
 
-// TODO: router.post("/login/admin", adminLogin)
+router.post("/login/admin", async (req, res, next) => {
+  const {username, password} = req.body
+
+  if (!username) {
+    return responseError(res, "not username provided")
+  }
+
+  if (!password) {
+    return responseError(res, "not password provided")
+  }
+
+  try {
+    const admin = await Admin.findOne({username}).select("password")
+
+    if (!admin) {
+      return responseError(res, "authentication fail")
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password)
+
+    if (isMatch) {
+      const token = jwt.sign(
+        pick(admin.toObject, ["username", "_id"]), config.JWT_SECRET)
+
+      return res.json(
+        createJsonResponse("success", {
+          token,
+        }),
+      )
+    }
+
+    return responseError(res, "password not match")
+  } catch (e) {
+    return next(new VError(e, "/login/admin"))
+  }
+})
 
 export default router

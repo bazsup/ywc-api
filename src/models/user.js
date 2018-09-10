@@ -69,6 +69,7 @@ const schema = new Schema({
   foodAllergy: String,
   medAllergy: String,
   otherContact: String,
+
   // Step 3: ywc insight
   knowCamp: [String],
   activities: String,

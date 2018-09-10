@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"
 import config from "config"
 import VError from "verror"
 
+import {respondError, responseError} from "../middlewares/error"
 import {User, Admin} from "../models"
 
 export const authen = (type = "any") => async (req, res, next) => {
@@ -10,7 +11,7 @@ export const authen = (type = "any") => async (req, res, next) => {
     const user = jwt.verify(token, config.JWT_SECRET)
 
     if (!user) {
-      return next(new Error("not authorized"))
+      return responseError(res, "not authorized")
     }
 
     const userObj = await User.findOne({_id: user._id})
@@ -23,7 +24,7 @@ export const authen = (type = "any") => async (req, res, next) => {
       return next()
     }
 
-    return next(new Error("not authorized"))
+    return responseError(res, "not authorized")
   } catch (e) {
     return next(new VError(e, "authen middlewares: on %s", req.originalUrl))
   }

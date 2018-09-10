@@ -5,6 +5,7 @@ import VError from "verror"
 import {pick} from "lodash"
 
 import {User, Question} from "../models"
+import {responseError} from "../middlewares/error"
 import {closeAfterDeadline} from "../middlewares/deadline"
 import {createJsonResponse, getFacebookUser} from "../utils"
 
@@ -14,7 +15,7 @@ router.post("/login", closeAfterDeadline, async (req, res, next) => {
   const {accessToken} = req.body
 
   if (!accessToken) {
-    return next(new Error("not token provided"))
+    return responseError(res, "not token provided")
   }
 
   try {

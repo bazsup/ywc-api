@@ -4,6 +4,7 @@ import moment from "moment"
 import {isArray} from "lodash"
 import EmailValidator from "email-validator"
 
+import {responseError} from "../middlewares/error"
 import {createJsonResponse} from "../utils/helpers"
 import {authen} from "../middlewares/authenticator"
 import {closeAfterDeadline} from "../middlewares/deadline"
@@ -23,7 +24,7 @@ router.put(
     const {major} = req.body
 
     if (!major) {
-      return next(new Error("major can't be empty"))
+      return responseError(res, "major can't be empty")
     }
 
     if (
@@ -68,7 +69,7 @@ router.put(
   ]),
   async (req, res, next) => {
     if (!moment(req.body.birthdate).isValid()) {
-      return next(new Error("invalid birthdate"))
+      return responseError(res, "invalid birthdate")
     }
 
     req.body.birthdate = moment.utc(req.body.birthdate).toDate()
@@ -113,7 +114,7 @@ router.put(
   ]),
   async (req, res, next) => {
     if (!EmailValidator.validate(req.body.email)) {
-      return next(new Error("invalid email format"))
+      return responseError(res, "invalid email format")
     }
 
     try {
@@ -162,11 +163,11 @@ router.put(
   authen(ROLE_IN_PROGRESS),
   async (req, res, next) => {
     if (!isArray(req.body.answers)) {
-      return next(new Error("answers is not the array"))
+      return responseError(res, "answers is not the array")
     }
 
     if (req.body.answers.length !== generalQuestionSize) {
-      return next(new Error("invalid array size"))
+      return responseError(res, "invalid array size")
     }
 
     try {
@@ -192,7 +193,7 @@ router.put(
   authen(ROLE_IN_PROGRESS),
   async (req, res, next) => {
     if (!isArray(req.body.answers)) {
-      return next(new Error("answers is not the array"))
+      return responseError(res, "answers is not the array")
     }
 
     try {
@@ -203,11 +204,11 @@ router.put(
       const question = await Question.findOne({_id: user.questions})
 
       if (!user.major) {
-        return next(new Error("major is not selected"))
+        return responseError(res, "major is not selected")
       }
 
       if (answers.length !== majorQuestionSize[user.major]) {
-        return next(new Error("invalid array size"))
+        return responseError(res, "invalid array size")
       }
 
       question.confirmedMajor = user.major
@@ -233,11 +234,11 @@ router.post(
       const question = await Question.findOne({_id: user.questions._id})
 
       if (!user.major) {
-        return next(new Error("major is not selected"))
+        return responseError(res, "major is not selected")
       }
 
       if (user.major !== question.confirmedMajor) {
-        return next(new Error("major questions are not submited"))
+        return responseError(res, "major questions are not submited")
       }
 
       user.status = ROLE_COMPLETED

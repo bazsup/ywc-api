@@ -10,6 +10,12 @@ const logger = winston.createLogger({
   ],
 })
 
+// response error message without log
+export const responseError = (message, res) => {
+  res.status(500)
+  res.json(createJsonResponse("error", {message}))
+}
+
 export const errorHandler = (err, req, res, next) => {
   // log message to console
   console.error("Error", err.message)

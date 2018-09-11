@@ -54,7 +54,9 @@ router.get("/committee", adminAuthen(ROLE_COMMITTEE), async (req, res, next) => 
       failed: false,
     }).select("_id major")
 
-    return res.json(createJsonResponse("success", users))
+    const data = users.filter(user => user.committeeVote.indexOf(req.admin._id) === -1)
+
+    return res.json(createJsonResponse("success", data))
   } catch (e) {
     return next(new VError("/users/committee", e))
   }

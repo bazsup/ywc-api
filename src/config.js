@@ -11,3 +11,12 @@ export const majorQuestionSize = {
   marketing: 3,
   programming: 3,
 }
+
+// questions (general & special)
+export const questions = {
+  general: [],
+  programming: [],
+  design: [],
+  content: [],
+  marketing: [],
+}

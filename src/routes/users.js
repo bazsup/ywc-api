@@ -10,7 +10,7 @@ import {adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
 
-// get user only id my major (for staff)
+// get user id from staff major (for staff grading system)
 router.get("/staff", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, res, next) => {
   try {
     const major = req.admin.major
@@ -24,6 +24,21 @@ router.get("/staff", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, res, n
     return res.json(createJsonResponse("success", users))
   } catch (e) {
     return next(new VError("/users/staff", e))
+  }
+})
+
+// get user general question from user id (for staff grading system)
+router.get("/staff/:id", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, res, next) => {
+  try {
+    const userID = req.params.id
+
+    const user = await User.findById(userID).populate("questions")
+
+    const generalQuestions = user.questions.generalQuestions
+
+    return res.json(createJsonResponse("success", generalQuestions))
+  } catch (e) {
+    return next(new VError(`/users/staff/${userID}`, e))
   }
 })
 

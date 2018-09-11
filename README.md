@@ -63,6 +63,9 @@ npm install babel-polypill babel-runtime bluebird —save
 
 ### Routes
 
+### Questions
+- `/questions` `method: get` - get all questions for registration
+
 #### Authentication
 - `/auth/login` `method: post` - user login with facebook
 - `/auth/login/admin` `method: post` - admin login for grading system

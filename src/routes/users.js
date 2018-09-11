@@ -1,4 +1,5 @@
 import {Router} from "express"
+import {pick} from "lodash"
 import VError from "verror"
 
 // import moment from "moment"
@@ -56,6 +57,22 @@ router.get("/committee", adminAuthen(ROLE_COMMITTEE), async (req, res, next) => 
     return res.json(createJsonResponse("success", users))
   } catch (e) {
     return next(new VError("/users/committee", e))
+  }
+})
+
+// get user data from user id (for committee grading system)
+// return questions, profile (without name and contact information)
+router.get("/committee/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
+  try {
+    const userID = req.params.id
+
+    const user = await User.findById(userID).populate("questions")
+    
+    const data = pick(user, ["questions", "activities", "major", "staffComment"])
+
+    return res.json(createJsonResponse("success", data))
+  } catch (e) {
+    return next(new VError(`/users/committee/${userID}`, e))
   }
 })
 

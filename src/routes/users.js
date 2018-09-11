@@ -4,14 +4,14 @@ import VError from "verror"
 // import moment from "moment"
 
 import {User} from "../models"
-import {ROLE_STAFF, ROLE_MANAGER} from "../utils/const"
+import {ROLE_STAFF, ROLE_MANAGER, ROLE_COMMITTEE} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
 import {adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
 
-// get user id from staff major (for staff grading system)
-router.get("/staff", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, res, next) => {
+// get users id from staff major (for staff grading system)
+router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
     const major = req.admin.major
 
@@ -28,7 +28,7 @@ router.get("/staff", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, res, n
 })
 
 // get user general question from user id (for staff grading system)
-router.get("/staff/:id", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, res, next) => {
+router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
     const userID = req.params.id
 
@@ -39,6 +39,23 @@ router.get("/staff/:id", adminAuthen([ROLE_STAFF, ROLE_MANAGER]), async (req, re
     return res.json(createJsonResponse("success", generalQuestions))
   } catch (e) {
     return next(new VError(`/users/staff/${userID}`, e))
+  }
+})
+
+// get users id from committee major (for committee grading system)
+router.get("/committee", adminAuthen(ROLE_COMMITTEE), async (req, res, next) => {
+  try {
+    const major = req.admin.major
+
+    const users = await User.find({
+      major,
+      isPassStaff: true,
+      failed: false,
+    }).select("_id major")
+
+    return res.json(createJsonResponse("success", users))
+  } catch (e) {
+    return next(new VError("/users/committee", e))
   }
 })
 

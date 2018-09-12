@@ -5,7 +5,7 @@ import VError from "verror"
 // import moment from "moment"
 
 import {User} from "../models"
-import {ROLE_STAFF, ROLE_MANAGER, ROLE_COMMITTEE} from "../utils/const"
+import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
 import {adminAuthen} from "../middlewares/authenticator"
 

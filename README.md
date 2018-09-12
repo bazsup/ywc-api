@@ -63,6 +63,9 @@ npm install babel-polypill babel-runtime bluebird —save
 
 ### Routes
 
+### Questions
+- `/questions` `method: get` - get all questions for registration
+
 #### Authentication
 - `/auth/login` `method: post` - user login with facebook
 - `/auth/login/admin` `method: post` - admin login for grading system
@@ -77,4 +80,8 @@ npm install babel-polypill babel-runtime bluebird —save
 - `/registration/confirm` `method: post` - confirm registration
 
 #### Users
+- `/users/staff` `method: get` - get users id for grading (staff role)
+- `/users/staff/:id` `method: get` - get user general questions for grading (staff role)
+- `/users/committee` `method: get` - get users id for grading (commitee role)
+- `/users/commitee/:id` `method: get` - get user data from user id (commitee role)
 - `/users/me` `method: get` - get all user data from access token

@@ -80,6 +80,8 @@ const schema = new Schema({
   },
 
   // grading system
+  failed: Boolean,
+
   isPassStaff: Boolean,
   staffComment: String,
 

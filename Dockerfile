@@ -9,8 +9,9 @@ WORKDIR /usr/src/app
 
 # install python
 RUN apk --no-cache add --virtual native-deps \
-  git g++ gcc libgcc libstdc++ linux-headers make python && \
-  npm install node-gyp -g &&\
+  git g++ gcc libgcc libstdc++ linux-headers make python
+
+RUN npm install node-gyp -g &&\
   npm install &&\
   npm rebuild bcrypt --build-from-source && \
   npm cache clean --force &&\

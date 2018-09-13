@@ -28,6 +28,7 @@ A backend API services that use for YWC registration. Reuse code from YWC#14
 ## Getting Started
 - run command `npm install` for install packages and dependencies
 - config your application `config/default.json` for default config
+- setup kubernates secret
 
 ```json
 {
@@ -39,6 +40,17 @@ A backend API services that use for YWC registration. Reuse code from YWC#14
   "FACEBOOK_SECRET": "FACEBOOK_APPS_SECRET (Test Apps)",
   "JWT_SECRET": "Ywc15WeAreAlwaysHiring"
 }
+```
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secret
+type: Opaque
+data:
+  mongourl: mongodb://root:secret@localhost:27017/admin
+  jwtsecret: Ywc15WeAreAlwaysHiring
 ```
 
 - config your application for production environment in `config/production.json` (it will override redundant field)

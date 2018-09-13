@@ -4,7 +4,7 @@ import app from "../app"
 import {Queue, Score} from "../models"
 
 require("babel-polyfill")
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 const server = http.createServer(app)
 const io = require("socket.io")(server)

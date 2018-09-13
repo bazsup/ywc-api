@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 import config from "config"
 import VError from "verror"
 import {pick} from "lodash"
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt-nodejs"
 
 import {Admin, User, Question} from "../models"
 import {responseError} from "../middlewares/error"
@@ -44,7 +44,7 @@ router.post("/login", closeAfterDeadline, async (req, res, next) => {
     // sign token with _id, facebook, status
     const token = jwt.sign(
       pick(user.toObject(), ["_id", "facebook", "status"]),
-      config.JWT_SECRET,
+      process.env.JWT_SECRET || config.JWT_SECRET,
     )
 
     return res.json(
@@ -79,7 +79,7 @@ router.post("/login/admin", async (req, res, next) => {
 
     if (isMatch) {
       const token = jwt.sign(
-        pick(admin.toObject, ["username", "_id"]), config.JWT_SECRET)
+        pick(admin.toObject, ["username", "_id"]), process.env.JWT_SECRET || config.JWT_SECRET)
 
       return res.json(
         createJsonResponse("success", {

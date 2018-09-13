@@ -11,9 +11,13 @@ RUN npm install
 # Bundle the app src
 COPY . .
 
+# update environment
+ENV NODE_ENV=production
+
 # build application
 RUN npm run build
 
 # Expose the port and run application
-EXPOSE 300
+EXPOSE 3000
+
 CMD ["node", "build/bin/server.js"]

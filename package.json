@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "nodemon ./src/bin/server.js --exec babel-node",
     "refactor": "prettier --config prettier.config.js --write \"**/**/*.js\" --ignore-path .prettierignore",
-    "build": "babel src --out-dir build --source-maps",
-    "build:file": "babel src --out-file build/bundle.js --source-maps",
+    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir build --source-maps",
+    "build:file": "./node_modules/babel-cli/bin/babel src --out-file build/bundle.js --source-maps",
     "build:clean": "rm -rf build"
   },
   "repository": {
@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/chunza2542/ywc-api#readme",
   "dependencies": {
-    "babel": "^6.23.0",
     "babel-eslint": "^6.1.2",
     "babel-plugin-transform-runtime": "^6.15.0",
     "bcrypt": "^3.0.0",

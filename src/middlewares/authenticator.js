@@ -9,7 +9,7 @@ import {User, Admin} from "../models"
 export const authen = (type = ROLE_ANY) => async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"]
-    const user = jwt.verify(token, config.JWT_SECRET)
+    const user = jwt.verify(token, process.env.JWT_SECRET || config.JWT_SECRET)
 
     if (!user) {
       return responseError(res, "not authorized")
@@ -34,7 +34,7 @@ export const authen = (type = ROLE_ANY) => async (req, res, next) => {
 export const adminAuthen = (role = ROLE_ANY) => async (req, res, next) => {
   try {
     const token = req.headers["x-access-token"]
-    const admin = jwt.verify(token, config.JWT_SECRET)
+    const admin = jwt.verify(token, process.env.JWT_SECRET || config.JWT_SECRET)
 
     if (!admin) {
       return respondErrors(res, "not authorized")

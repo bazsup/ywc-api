@@ -34,3 +34,14 @@ spec:
         - name: http
           containerPort: 3000
           protocol: TCP
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: mongourl
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: jwtsecret

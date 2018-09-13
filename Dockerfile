@@ -4,6 +4,9 @@ FROM node:8
 # Create the directory
 WORKDIR /usr/src/app
 
+# install needed package
+RUN apt-get install -y build-essential
+
 # Install dependencies
 COPY package*.json ./
 RUN npm install

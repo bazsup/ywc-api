@@ -1,5 +1,5 @@
 import {Router} from "express"
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt-nodejs"
 
 import {respondError} from "../middlewares/error"
 import {adminAuthen} from "../middlewares/authenticator"

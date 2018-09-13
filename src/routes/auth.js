@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 import config from "config"
 import VError from "verror"
 import {pick} from "lodash"
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt-nodejs"
 
 import {Admin, User, Question} from "../models"
 import {responseError} from "../middlewares/error"

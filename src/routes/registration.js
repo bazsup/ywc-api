@@ -66,6 +66,10 @@ router.put(
     "religion",
     "blood",
     "picture",
+    "educationStatus",
+    "equivalentEducationDegree",
+    "currentWorkingStatus",
+    "workingStatusDescription"
   ]),
   async (req, res, next) => {
     if (!moment(req.body.birthdate).isValid()) {
@@ -110,7 +114,7 @@ router.put(
     "med",
     "foodAllergy",
     "medAllergy",
-    "otherContact",
+    "skype"
   ]),
   async (req, res, next) => {
     if (!EmailValidator.validate(req.body.email)) {

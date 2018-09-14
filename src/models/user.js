@@ -24,6 +24,11 @@ const schema = new Schema({
   nickname: String,
   faculty: String,
   department: String,
+  picture: String,
+  educationStatus: String,
+  equivalentEducationDegree: String,
+  currentWorkingStatus: String,
+  workingStatusDescription: String,
   academicYear: {
     type: String,
     enum: [
@@ -35,6 +40,7 @@ const schema = new Schema({
       "ปี 6",
       "ปวส. ปี 1",
       "ปวส. ปี 2",
+      "-"
     ],
   },
   university: String,
@@ -69,6 +75,7 @@ const schema = new Schema({
   foodAllergy: String,
   medAllergy: String,
   otherContact: String,
+  skype: String,
 
   // Step 3: ywc insight
   knowCamp: [String],

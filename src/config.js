@@ -6,10 +6,10 @@ export const generalQuestionSize = 3
 
 // major question array size
 export const majorQuestionSize = {
-  design: 3,
+  design: 4,
   content: 3,
   marketing: 3,
-  programming: 3,
+  programming: 4,
 }
 
 // questions (general & special)

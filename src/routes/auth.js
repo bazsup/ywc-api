@@ -79,7 +79,9 @@ router.post("/login/admin", async (req, res, next) => {
 
     if (isMatch) {
       const token = jwt.sign(
-        pick(admin.toObject, ["username", "_id"]), process.env.JWT_SECRET || config.JWT_SECRET)
+        pick(admin.toObject, ["username", "_id"]),
+        process.env.JWT_SECRET || config.JWT_SECRET,
+      )
 
       return res.json(
         createJsonResponse("success", {

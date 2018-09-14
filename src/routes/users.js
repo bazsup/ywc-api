@@ -7,7 +7,7 @@ import VError from "verror"
 import {User} from "../models"
 import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
-import {authen,adminAuthen} from "../middlewares/authenticator"
+import {authen, adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
 
@@ -44,39 +44,54 @@ router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
 })
 
 // get users id from committee major (for committee grading system)
-router.get("/committee", adminAuthen(ROLE_COMMITTEE), async (req, res, next) => {
-  try {
-    const major = req.admin.major
+router.get(
+  "/committee",
+  adminAuthen(ROLE_COMMITTEE),
+  async (req, res, next) => {
+    try {
+      const major = req.admin.major
 
-    const users = await User.find({
-      major,
-      isPassStaff: true,
-      failed: false,
-    }).select("_id major")
+      const users = await User.find({
+        major,
+        isPassStaff: true,
+        failed: false,
+      }).select("_id major")
 
-    const data = users.filter(user => user.committeeVote.indexOf(req.admin._id) === -1)
+      const data = users.filter(
+        (user) => user.committeeVote.indexOf(req.admin._id) === -1,
+      )
 
-    return res.json(createJsonResponse("success", data))
-  } catch (e) {
-    return next(new VError("/users/committee", e))
-  }
-})
+      return res.json(createJsonResponse("success", data))
+    } catch (e) {
+      return next(new VError("/users/committee", e))
+    }
+  },
+)
 
 // get user data from user id (for committee grading system)
 // return questions, profile (without name and contact information)
-router.get("/committee/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
-  try {
-    const userID = req.params.id
+router.get(
+  "/committee/:id",
+  adminAuthen(ROLE_STAFF),
+  async (req, res, next) => {
+    try {
+      const userID = req.params.id
 
-    const user = await User.findById(userID).populate("questions")
-    
-    const data = pick(user, ["questions", "activities", "major", "staffComment"])
+      const user = await User.findById(userID).populate("questions")
 
-    return res.json(createJsonResponse("success", data))
-  } catch (e) {
-    return next(new VError(`/users/committee/${userID}`, e))
-  }
-})
+      const data = pick(user, [
+        "questions",
+        "activities",
+        "major",
+        "staffComment",
+      ])
+
+      return res.json(createJsonResponse("success", data))
+    } catch (e) {
+      return next(new VError(`/users/committee/${userID}`, e))
+    }
+  },
+)
 
 // get all candidates (users)
 // router.get("/", adminAuthen("admin"), async (req, res) => {

@@ -52,6 +52,8 @@ export const adminAuthen = (role = ROLE_ANY) => async (req, res, next) => {
 
     return respondErrors(res, "not authorized")
   } catch (e) {
-    return next(new VError(e, "admin authen middlewares: on %s", req.originalUrl))
+    return next(
+      new VError(e, "admin authen middlewares: on %s", req.originalUrl),
+    )
   }
 }

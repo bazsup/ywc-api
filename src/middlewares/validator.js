@@ -4,7 +4,7 @@ export const emptyValidator = (fields) => (req, res, next) => {
   })
 
   fields.forEach((field) => {
-    req.sanitizeBody(field).toString()
+    req.sanitizeBody(field)
   })
 
   const errors = req.validationErrors()

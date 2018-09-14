@@ -11,6 +11,7 @@ const schema = new Schema({
   },
   questions: {type: ObjectId, ref: "Question"},
   completed_at: Date,
+  profile: String,
 
   // Step 1: user information
   title: {

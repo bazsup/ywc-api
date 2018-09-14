@@ -12,12 +12,7 @@ const schema = new Schema({
   role: {
     type: String,
     required: true,
-    enum: [
-      "staff",
-      "committee",
-      "admin",
-      "manager",
-    ],
+    enum: ["staff", "committee", "admin", "manager"],
   },
 })
 

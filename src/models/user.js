@@ -41,7 +41,7 @@ const schema = new Schema({
       "ปี 6",
       "ปวส. ปี 1",
       "ปวส. ปี 2",
-      "-"
+      "-",
     ],
   },
   university: String,

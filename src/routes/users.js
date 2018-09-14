@@ -7,7 +7,7 @@ import VError from "verror"
 import {User} from "../models"
 import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
-import {adminAuthen} from "../middlewares/authenticator"
+import {authen,adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
 
@@ -87,15 +87,15 @@ router.get("/committee/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => 
 // })
 
 // get user information and questions from access token
-// router.get("/me", authen(), async (req, res, next) => {
-//   const user = await User.findOne({_id: req.user._id}).populate("questions")
+router.get("/me", authen(), async (req, res, next) => {
+  const user = await User.findOne({_id: req.user._id}).populate("questions")
 
-//   if (!user) {
-//     return next(new Error("user not found"))
-//   }
+  if (!user) {
+    return next(new Error("user not found"))
+  }
 
-//   return res.send(createJsonResponse("success", user))
-// })
+  return res.send(createJsonResponse("success", user))
+})
 
 // show completed-user stat
 // router.get("/stat", async (req, res) => {

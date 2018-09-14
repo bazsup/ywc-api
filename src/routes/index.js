@@ -12,7 +12,7 @@ import {createJsonResponse} from "../utils/helpers"
 const router = Router()
 
 router.get("/", (req, res, next) => {
-  res.status(200).send({status: "YWC API Server is running!"})
+  return res.json(createJsonResponse("success", "YWC API is running!"))
 })
 
 router.use("/users", users)

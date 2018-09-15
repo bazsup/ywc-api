@@ -19,6 +19,8 @@ mongoose.connect(
   process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
   {
     useMongoClient: true,
+    reconnectTries: Number.MAX_VALUE,
+    reconnectInterval: 500,
   },
 )
 mongoose.connection.on("error", () => {

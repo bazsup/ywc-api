@@ -92,6 +92,7 @@ npm install babel-polypill babel-runtime bluebird —save
 - `/registration/confirm` `method: post` - confirm registration
 
 #### Users
+- `/users/stat` `method: get` - count submitted user (registration)
 - `/users/staff` `method: get` - get users id for grading (staff role)
 - `/users/staff/:id` `method: get` - get user general questions for grading (staff role)
 - `/users/committee` `method: get` - get users id for grading (commitee role)

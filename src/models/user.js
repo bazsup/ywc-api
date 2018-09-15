@@ -47,7 +47,7 @@ const schema = new Schema({
   university: String,
   sex: {
     type: String,
-    enum: ["ชาย", "หญิง"],
+    enum: ["ชาย", "หญิง", "อื่นๆ"],
   },
   birthdate: Date,
   religion: {

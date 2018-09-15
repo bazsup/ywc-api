@@ -2,8 +2,6 @@ import {Router} from "express"
 import {pick} from "lodash"
 import VError from "verror"
 
-// import moment from "moment"
-
 import {User} from "../models"
 import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
@@ -113,34 +111,28 @@ router.get("/me", authen(), async (req, res, next) => {
 })
 
 // show completed-user stat
-// router.get("/stat", async (req, res) => {
-//   try {
-//     const programmingCompleted = User.count({
-//       status: "completed",
-//       major: "programming",
-//     })
-//     const designCompleted = User.count({status: "completed", major: "design"})
-//     const contentCompleted = User.count({status: "completed", major: "content"})
-//     const marketingCompleted = User.count({
-//       status: "completed",
-//       major: "marketing",
-//     })
-//     const [programming, design, content, marketing] = await Promise.all([
-//       programmingCompleted,
-//       designCompleted,
-//       contentCompleted,
-//       marketingCompleted,
-//     ])
-//     return res.send({
-//       programming,
-//       design,
-//       content,
-//       marketing,
-//     })
-//   } catch (err) {
-//     return res.error(err)
-//   }
-// })
+router.get("/stat", async (req, res) => {
+  try {
+    // query total number of completed registration user
+    const completed = ["programming", "design", "content", "marketing"].map(major => {
+      return User.count({
+        status: "completed",
+        major,
+      })
+    })
+
+    const [programming, design, content, marketing] = await Promise.all(completed)
+
+    return res.json(createJsonResponse("success", {
+      programming,
+      design,
+      content,
+      marketing,
+    }))
+  } catch (err) {
+    return next(new VError("/stat:", err))
+  }
+})
 
 // router.get("/by-day-stat", adminAuthen("admin"), async (req, res) => {
 //   try {

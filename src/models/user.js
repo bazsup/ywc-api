@@ -52,7 +52,7 @@ const schema = new Schema({
   birthdate: Date,
   religion: {
     type: String,
-    enum: ["พุทธ", "คริสต์", "อิสลาม", "พราหมณ์", "สิกข์", "ไม่ระบุ"],
+    enum: ["พุทธ", "คริสต์", "อิสลาม", "พราหมณ์", "ซิกข์", "ไม่ระบุ"],
   },
   blood: {
     type: String,

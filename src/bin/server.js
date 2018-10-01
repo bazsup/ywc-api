@@ -9,16 +9,9 @@ import { Certificate } from "crypto";
 
 require("babel-polyfill")
 
-// cloudflare credentials
-const credentials = {
-  key: fs.readFileSync(path.join(__dirname, "server.key"), "utf8"),
-  cert: fs.readFileSync(path.join(__dirname, "server.crt"), "utf8")
-}
-
 const PORT = process.env.PORT || 3000
 
 const server = http.createServer(app)
-const httpsServer = https.createServer(credentials, app)
 
 const io = require("socket.io")(server)
 
@@ -36,9 +29,19 @@ server.on("request", (req) => {
 })
 
 // run http & https server
-httpsServer.listen(PORT + 443, () => {
-  console.log(`Listening https on port ${PORT + 443}`)
-})
+if (process.env.NODE_ENV === "production") {
+  // cloudflare credentials
+  const credentials = {
+    key: process.env.PRIVATE_KEY || "",
+    cert: process.env.CERTIFICATE || "",
+  }
+
+  const httpsServer = https.createServer(credentials, app)
+
+  httpsServer.listen(PORT + 443, () => {
+    console.log(`Listening https on port ${PORT + 443}`)
+  })
+}
 
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)

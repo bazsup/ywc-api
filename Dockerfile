@@ -17,7 +17,7 @@ ENV NODE_ENV=production
 # build application
 RUN npm run build
 
-# Expose the port and run application
-EXPOSE 3000
+# Expose the port (http & https) and run application
+EXPOSE 3000 3443
 
 CMD ["node", "build/bin/server.js"]

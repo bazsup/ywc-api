@@ -1,30 +1,26 @@
+import fs from "fs"
+import path from "path"
 import http from "http"
+import https from "https"
 
 import app from "../app"
 import {Queue, Score} from "../models"
+import { Certificate } from "crypto";
 
 require("babel-polyfill")
+
+// cloudflare credentials
+const credentials = {
+  key: fs.readFileSync(path.join(__dirname, "server.key"), "utf8"),
+  cert: fs.readFileSync(path.join(__dirname, "server.crt"), "utf8")
+}
+
 const PORT = process.env.PORT || 3000
 
 const server = http.createServer(app)
-const io = require("socket.io")(server)
+const httpsServer = https.createServer(credentials, app)
 
-// const sendCurrentQueue = () => (
-//   Promise.all([
-//     Queue.findOne({ major: 'design' }),
-//     Queue.findOne({ major: 'programming' }),
-//     Queue.findOne({ major: 'marketing' }),
-//     Queue.findOne({ major: 'content' })
-//   ])
-//   .then(([design, programming, marketing, content]) => (
-//     io.emit('queue', {
-//       design: design.order,
-//       programming: programming.order,
-//       marketing: marketing.order,
-//       content: content.order
-//     })
-//   ))
-// );
+const io = require("socket.io")(server)
 
 const sendCurrentScore = () =>
   Score.find({}).then((scores) => io.emit("score", scores))
@@ -37,6 +33,11 @@ io.on("connection", () => {
 server.on("request", (req) => {
   // req.ioSendQueue = sendCurrentQueue;
   req.ioSendScore = sendCurrentScore
+})
+
+// run http & https server
+httpsServer.listen(PORT + 443, () => {
+  console.log(`Listening https on port ${PORT + 443}`)
 })
 
 server.listen(PORT, () => {

@@ -48,3 +48,13 @@ spec:
             secretKeyRef:
               name: secret
               key: jwtsecret
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: privatekey
+        - name: CERTIFICATE
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: certificate

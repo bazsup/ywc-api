@@ -1,105 +1,54 @@
 import {Router} from "express"
+import VError from "verror"
 import bcrypt from "bcrypt-nodejs"
 
-import {respondError} from "../middlewares/error"
 import {adminAuthen} from "../middlewares/authenticator"
-// import {requireRoles, adminAuthorize} from "../middlewares/admin"
-// import {respondResult, respondSuccess, respondErrors} from "../utils"
+import {ROLE_ANY, ROLE_ADMIN} from "../utils/const"
+import {createJsonResponse} from "../utils/helpers"
 import {Admin} from "../models"
 
 const router = Router()
 
-// router.put('/:id', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
-//   try {
-//     req.checkBody('username', 'Invalid username').optional().isString();
-//     req.checkBody('password', 'Invalid password').optional().isString();
-//     req.checkBody('role', 'Invalid role').optional().isString();
-//     req.sanitizeBody('username').toString();
-//     req.sanitizeBody('password').toString();
-//     req.sanitizeBody('role').toString();
-//     const errors = req.validationErrors();
-//     if (errors) respondErrors(errors, 400);
-//     else {
-//       const admin = await Admin.findById(req.params.id);
-//       const { password, role } = req.body;
-//       if (password) admin.password = password;
-//       if (role) admin.role = role;
-//       await admin.save();
-//       const result = await Admin.findById(req.params.id);
-//       respondResult(res)(result);
-//     }
-//   } catch (err) {
-//     respondErrors(res)(err);
-//   }
-// });
-// router.post('/login', async (req, res) => {
-//   try {
-//     req.checkBody('username', 'Invalid username').notEmpty().isString();
-//     req.checkBody('password', 'Invalid password').notEmpty().isString();
-//     req.sanitizeBody('username').toString();
-//     req.sanitizeBody('password').toString();
-//     const errors = req.validationErrors();
-//     if (errors) respondErrors(errors, 400);
-//     else {
-//       const { username, password } = req.body;
-//       // todo : Bcrypt
-//       const admin = await Admin.findOne({ username, password });
-//       if (admin) {
-//         respondResult(res)(admin);
-//       }
-//     }
-//   } catch (err) {
-//     respondErrors(res)(err);
-//   }
-// });
-
-// router.post('/logout', (req, res) => {
-//   req.session.destroy(() => {
-//     req.session = null;
-//     res.send({ logout: true });
-//   });
-// });
-router.get("/", adminAuthen("admin"), async (req, res) => {
+// get all backoffice user
+router.get("/", adminAuthen(ROLE_ADMIN), async (req, res) => {
   try {
-    const adminUsers = await Admin.find()
-    return res.send(adminUsers)
+    const users = await Admin.find()
+
+    return res.send(createJsonResponse("success", users))
   } catch (err) {
-    return res.error(err)
+    return next(new VError(err, "/admin:get"))
   }
 })
 
-router.post("/", adminAuthen("admin"), async (req, res) => {
+// create new backoffice user
+router.post("/", adminAuthen(ROLE_ADMIN), async (req, res) => {
+  const {username, password, role} = req.body
+
   try {
     await Admin.create({
-      username: req.body.username,
-      password: bcrypt.hashSync(req.body.password, 10),
-      role: req.body.role,
+      role,
+      username,
+      password: bcrypt.hashSync(password, 10),
     })
-    return res.send({success: true})
+
+    return res.send(createJsonResponse("success"))
   } catch (err) {
-    return res.error(err)
+    return next(new VError(err, "/admin:post"))
   }
 })
 
-router.get("/me", adminAuthen("any"), (req, res) => {
-  res.send(req.admin)
+router.get("/me", adminAuthen(ROLE_ANY), (req, res) => {
+  return res.send(createJsonResponse("success", req.admin))
 })
 
-router.delete("/:id", adminAuthen("admin"), async (req, res) => {
+router.delete("/:id", adminAuthen(ROLE_ADMIN), async (req, res) => {
   try {
     await Admin.remove({_id: req.params.id})
-    return res.send({success: true})
-  } catch (e) {
-    return res.error(e)
+
+    return res.send(createJsonResponse("success"))
+  } catch (err) {
+    return next(new VError(err, "/admin:delete id = ", req.params.id))
   }
 })
 
-// router.get('/:id', requireRoles('SuperAdmin', 'Supporter'), async (req, res) => {
-//   try {
-//     const admin = await Admin.findById(req.params.id);
-//     respondResult(res)(admin);
-//   } catch (err) {
-//     respondErrors(res)(err);
-//   }
-// });
 export default router

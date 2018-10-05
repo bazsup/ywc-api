@@ -42,25 +42,22 @@ router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   }
 })
 
-// get users id from committee major (for committee grading system)
+// get users id by committee major (for committee grading system)
 router.get(
   "/committee",
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
-      const major = req.admin.major
+      const {major} = req.admin
 
       const users = await User.find({
         major,
+        status: ROLE_COMPLETED,
         isPassStaff: true,
-        failed: false,
-      }).select("_id major")
+        failed: {$ne: true},
+      }).select("_id major committeeVote")
 
-      const data = users.filter(
-        (user) => user.committeeVote.indexOf(req.admin._id) === -1,
-      )
-
-      return res.json(createJsonResponse("success", data))
+      return res.json(createJsonResponse("success", users))
     } catch (e) {
       return next(new VError("/users/committee", e))
     }

@@ -94,8 +94,9 @@ const schema = new Schema({
   staffComment: String,
   staffUsername: String,
 
-  // reference to admin model (store comiitee object id)
-  committeeVote: [ObjectId],
+  // reference to admin model (store committee username as string)
+  committeeVote: [String],
+  committeeScore: Number,
   committeeComment: String,
 
   // is user pass to interview

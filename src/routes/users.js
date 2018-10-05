@@ -9,15 +9,15 @@ import {authen, adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
 
-// get users id from staff major (for staff grading system)
+// get users id by staff major (for staff grading system)
 router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
-    const major = req.admin.major
+    const {major} = req.admin
 
     const users = await User.find({
       major,
-      isPassStaff: false,
-      failed: false,
+      isPassStaff: {$ne: true},
+      failed: {$ne: true},
     }).select("_id major")
 
     return res.json(createJsonResponse("success", users))

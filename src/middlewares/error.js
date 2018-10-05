@@ -12,7 +12,7 @@ const logger = winston.createLogger({
 
 // response error message without log
 export const responseError = (res, message) => {
-  res.status(500)
+  res.status(200)
   res.json(createJsonResponse("error", {message}))
 }
 
@@ -29,7 +29,7 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   // response error with json
-  res.status(500)
+  res.status(200)
   res.json(
     createJsonResponse("error", {
       message: err.message,

@@ -75,13 +75,15 @@ router.post("/login/admin", async (req, res, next) => {
       return responseError(res, "authentication fail")
     }
 
-    const isMatch = await bcrypt.compare(password, admin.password)
+    const isMatch = bcrypt.compareSync(password, admin.password)
 
     if (isMatch) {
       const token = jwt.sign(
-        pick(admin.toObject, ["username", "_id"]),
+        pick(admin, ["_id"]),
         process.env.JWT_SECRET || config.JWT_SECRET,
       )
+
+    console.log("test",pick(admin.toObject, ["username", "_id"]))
 
       return res.json(
         createJsonResponse("success", {

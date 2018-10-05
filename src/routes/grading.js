@@ -56,6 +56,35 @@ router.post(
   },
 )
 
+router.post(
+  "/staff/eject",
+  adminAuthen(ROLE_STAFF),
+  async (req, res, next) => {
+    try {
+      const {id} = req.body
+      const user = await User.findOne({_id: id})
+
+      if (!user) {
+        return responseError(res, "user not found")
+      }
+
+      if (user.failed || user.isPassStaff) {
+        return responseError(res, "user is already judged")
+      }
+
+      user.isPassStaff = true
+      user.failed = true
+      user.staffUsername = req.admin.username
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
+    } catch (e) {
+      return next(new VError(e, "/staff/eject"))
+    }
+  },
+)
+
 router.get(
   "/stage-one",
   adminAuthen(["admin", "stage-1"]),

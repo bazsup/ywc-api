@@ -1,7 +1,11 @@
 import {Router} from "express"
 import _ from "lodash"
+import VError from "verror"
 import {Admin, User, Question} from "../models"
 import {adminAuthen} from "../middlewares/authenticator"
+import {ROLE_STAFF} from "../utils/const";
+import {responseError} from "../middlewares/error";
+import {createJsonResponse} from "../utils";
 
 const router = Router()
 
@@ -20,6 +24,37 @@ const maximumMajor = {
   content: 3,
   design: 2,
 }
+
+router.post(
+  "/staff/pass",
+  adminAuthen(ROLE_STAFF),
+  async (req, res, next) => {
+    try {
+      const {id, comment} = req.body
+      const user = await User.findOne({_id: id})
+
+      if (!user) {
+        return responseError(res, "user not found")
+      }
+
+      if (user.failed || user.isPassStaff) {
+        return responseError(res, "user is already judged")
+      }
+
+      user.isPassStaff = true
+      user.staffUsername = req.admin.username
+      if (comment) {
+        user.staffComment = comment
+      }
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
+    } catch (e) {
+      return next(new VError(e, "/staff/pass"))
+    }
+  },
+)
 
 router.get(
   "/stage-one",

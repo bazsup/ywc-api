@@ -92,6 +92,7 @@ const schema = new Schema({
 
   isPassStaff: Boolean,
   staffComment: String,
+  staffUsername: String,
 
   // reference to admin model (store comiitee object id)
   committeeVote: [ObjectId],

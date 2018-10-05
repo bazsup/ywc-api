@@ -3,7 +3,7 @@ import {pick} from "lodash"
 import VError from "verror"
 
 import {User} from "../models"
-import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const"
+import {ROLE_STAFF, ROLE_COMMITTEE, ROLE_COMPLETED} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
 import {authen, adminAuthen} from "../middlewares/authenticator"
 
@@ -16,6 +16,7 @@ router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
 
     const users = await User.find({
       major,
+      status: ROLE_COMPLETED,
       isPassStaff: {$ne: true},
       failed: {$ne: true},
     }).select("_id major")

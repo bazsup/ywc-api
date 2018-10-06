@@ -119,21 +119,27 @@ router.get("/me", authen(), async (req, res, next) => {
 router.get("/stat", async (req, res) => {
   try {
     // query total number of completed registration user
-    const completed = ["programming", "design", "content", "marketing"].map(major => {
-      return User.count({
-        status: "completed",
-        major,
-      })
-    })
+    const completed = ["programming", "design", "content", "marketing"].map(
+      (major) => {
+        return User.count({
+          status: "completed",
+          major,
+        })
+      },
+    )
 
-    const [programming, design, content, marketing] = await Promise.all(completed)
+    const [programming, design, content, marketing] = await Promise.all(
+      completed,
+    )
 
-    return res.json(createJsonResponse("success", {
-      programming,
-      design,
-      content,
-      marketing,
-    }))
+    return res.json(
+      createJsonResponse("success", {
+        programming,
+        design,
+        content,
+        marketing,
+      }),
+    )
   } catch (err) {
     return next(new VError("/stat:", err))
   }

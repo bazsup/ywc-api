@@ -83,7 +83,7 @@ router.post("/login/admin", async (req, res, next) => {
         process.env.JWT_SECRET || config.JWT_SECRET,
       )
 
-    console.log("test",pick(admin.toObject, ["username", "_id"]))
+      console.log("test", pick(admin.toObject, ["username", "_id"]))
 
       return res.json(
         createJsonResponse("success", {

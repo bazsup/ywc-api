@@ -14,9 +14,11 @@ router.get("/", adminAuthen(ROLE_ADMIN), async (req, res) => {
   try {
     const users = await Admin.find()
 
-    return res.send(createJsonResponse("success", {
-      users,
-    }))
+    return res.send(
+      createJsonResponse("success", {
+        users,
+      }),
+    )
   } catch (err) {
     return next(new VError(err, "/admin:get"))
   }
@@ -40,9 +42,11 @@ router.post("/", adminAuthen(ROLE_ADMIN), async (req, res) => {
 })
 
 router.get("/me", adminAuthen(ROLE_ANY), (req, res) => {
-  return res.send(createJsonResponse("success", {
-    profile: req.admin,
-  }))
+  return res.send(
+    createJsonResponse("success", {
+      profile: req.admin,
+    }),
+  )
 })
 
 router.delete("/:id", adminAuthen(ROLE_ADMIN), async (req, res) => {

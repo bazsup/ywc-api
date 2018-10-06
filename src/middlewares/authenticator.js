@@ -37,7 +37,7 @@ export const adminAuthen = (role = ROLE_ANY) => async (req, res, next) => {
     const admin = jwt.verify(token, process.env.JWT_SECRET || config.JWT_SECRET)
 
     if (!admin) {
-      return respondErrors(res, "not authorized")
+      return responseError(res, "not authorized")
     }
 
     const adminObj = await Admin.findOne({_id: admin._id})
@@ -50,7 +50,7 @@ export const adminAuthen = (role = ROLE_ANY) => async (req, res, next) => {
       return next()
     }
 
-    return respondErrors(res, "not authorized")
+    return responseError(res, "not authorized")
   } catch (e) {
     return next(
       new VError(e, "admin authen middlewares: on %s", req.originalUrl),

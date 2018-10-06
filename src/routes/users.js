@@ -68,7 +68,7 @@ router.get(
 // return questions, profile (without name and contact information)
 router.get(
   "/committee/:id",
-  adminAuthen(ROLE_STAFF),
+  adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
       const userID = req.params.id
@@ -76,10 +76,17 @@ router.get(
       const user = await User.findById(userID).populate("questions")
 
       const data = pick(user, [
+        "academicYear",
+        "department",
+        "educationStatus",
+        "equivalentEducationDegree",
+        "faculty",
+        "university",
         "questions",
         "activities",
         "major",
         "staffComment",
+        "staffUsername",
       ])
 
       return res.json(createJsonResponse("success", data))

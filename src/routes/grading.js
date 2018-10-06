@@ -3,7 +3,7 @@ import _ from "lodash"
 import VError from "verror"
 import {Admin, User, Question} from "../models"
 import {adminAuthen} from "../middlewares/authenticator"
-import {ROLE_STAFF} from "../utils/const";
+import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const";
 import {responseError} from "../middlewares/error";
 import {createJsonResponse} from "../utils";
 
@@ -81,6 +81,43 @@ router.post(
       return res.send(createJsonResponse("success"))
     } catch (e) {
       return next(new VError(e, "/staff/eject"))
+    }
+  },
+)
+
+router.post(
+  "/committee/vote",
+  adminAuthen(ROLE_COMMITTEE),
+  async (req, res, next) => {
+    try {
+      const {id, score} = req.body
+      const user = await User.findOne({_id: id})
+
+      if (!user) {
+        return responseError(res, "user not found")
+      }
+
+      if (user.failed || !user.isPassStaff || user.committeeVote.indexOf(req.admin.username) !== -1) {
+        return responseError(res, "user is already judged")
+      }
+
+      if (typeof user.committeeVote === "undefined") {
+        user.committeeVote = [req.admin.username]
+      } else {
+        user.committeeVote = [...user.committeeVote, req.admin.username]
+      }
+
+      if (!user.committeeScore) {
+        user.committeeScore = +score
+      } else {
+        user.committeeScore += +score
+      }
+
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
+    } catch (e) {
+      return next(new VError(e, "/committee/vote"))
     }
   },
 )

@@ -42,25 +42,22 @@ router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   }
 })
 
-// get users id from committee major (for committee grading system)
+// get users id by committee major (for committee grading system)
 router.get(
   "/committee",
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
-      const major = req.admin.major
+      const {major} = req.admin
 
       const users = await User.find({
         major,
+        status: ROLE_COMPLETED,
         isPassStaff: true,
-        failed: false,
-      }).select("_id major")
+        failed: {$ne: true},
+      }).select("_id major committeeVote")
 
-      const data = users.filter(
-        (user) => user.committeeVote.indexOf(req.admin._id) === -1,
-      )
-
-      return res.json(createJsonResponse("success", data))
+      return res.json(createJsonResponse("success", users))
     } catch (e) {
       return next(new VError("/users/committee", e))
     }
@@ -71,7 +68,7 @@ router.get(
 // return questions, profile (without name and contact information)
 router.get(
   "/committee/:id",
-  adminAuthen(ROLE_STAFF),
+  adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
       const userID = req.params.id
@@ -79,10 +76,17 @@ router.get(
       const user = await User.findById(userID).populate("questions")
 
       const data = pick(user, [
+        "academicYear",
+        "department",
+        "educationStatus",
+        "equivalentEducationDegree",
+        "faculty",
+        "university",
         "questions",
         "activities",
         "major",
         "staffComment",
+        "staffUsername",
       ])
 
       return res.json(createJsonResponse("success", data))
@@ -115,21 +119,27 @@ router.get("/me", authen(), async (req, res, next) => {
 router.get("/stat", async (req, res) => {
   try {
     // query total number of completed registration user
-    const completed = ["programming", "design", "content", "marketing"].map(major => {
-      return User.count({
-        status: "completed",
-        major,
-      })
-    })
+    const completed = ["programming", "design", "content", "marketing"].map(
+      (major) => {
+        return User.count({
+          status: "completed",
+          major,
+        })
+      },
+    )
 
-    const [programming, design, content, marketing] = await Promise.all(completed)
+    const [programming, design, content, marketing] = await Promise.all(
+      completed,
+    )
 
-    return res.json(createJsonResponse("success", {
-      programming,
-      design,
-      content,
-      marketing,
-    }))
+    return res.json(
+      createJsonResponse("success", {
+        programming,
+        design,
+        content,
+        marketing,
+      }),
+    )
   } catch (err) {
     return next(new VError("/stat:", err))
   }

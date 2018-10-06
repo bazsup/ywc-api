@@ -5,7 +5,7 @@ import https from "https"
 
 import app from "../app"
 import {Queue, Score} from "../models"
-import { Certificate } from "crypto";
+import {Certificate} from "crypto"
 
 require("babel-polyfill")
 

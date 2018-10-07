@@ -34,9 +34,15 @@ router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
 
     const user = await User.findById(userID).populate("questions")
 
-    const generalQuestions = user.questions.generalQuestions
+    const data = pick(user, [
+      "birthdate",
+      "sex",
+      "educationStatus",
+      "questions",
+      "major",
+    ])
 
-    return res.json(createJsonResponse("success", generalQuestions))
+    return res.json(createJsonResponse("success", data))
   } catch (e) {
     return next(new VError(`/users/staff/${userID}`, e))
   }

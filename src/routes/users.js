@@ -2,7 +2,7 @@ import {Router} from "express"
 import {pick} from "lodash"
 import VError from "verror"
 
-import {User} from "../models"
+import User from "../models/user"
 import {ROLE_STAFF, ROLE_COMMITTEE, ROLE_COMPLETED} from "../utils/const"
 import {createJsonResponse} from "../utils/helpers"
 import {authen, adminAuthen} from "../middlewares/authenticator"
@@ -29,9 +29,9 @@ router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
 
 // get user general question from user id (for staff grading system)
 router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
-  try {
-    const userID = req.params.id
+  const userID = req.params.id
 
+  try {
     const user = await User.findById(userID).populate("questions")
 
     const data = pick(user, [
@@ -70,15 +70,35 @@ router.get(
   },
 )
 
+// get only staff pass (tend to be deprecated)
+router.get(
+  "/committee/stat",
+  adminAuthen(ROLE_COMMITTEE),
+  async (req, res, next) => {
+    try {
+      const passStaff = await User.count({
+        major: req.admin.major,
+        isPassStaff: true,
+        failed: {$ne: true},
+      })
+
+      return res.send(createJsonResponse("success", {passStaff}))
+    } catch (e) {
+      return next(new VError(e, "/users/committee/stat"))
+    }
+  },
+)
+
+
 // get user data from user id (for committee grading system)
 // return questions, profile (without name and contact information)
 router.get(
   "/committee/:id",
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
-    try {
-      const userID = req.params.id
+    const userID = req.params.id
 
+    try {
       const user = await User.findById(userID).populate("questions")
 
       const data = pick(user, [

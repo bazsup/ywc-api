@@ -296,7 +296,24 @@ router.get(
       .exec()
       .toArray()
 
+      const totalCandidate = await User.count({})
+
+      const completed = ["programming", "design", "content", "marketing"].map(
+        (major) => {
+          return User.count({major})
+        },
+      )
+
+      const [programming, design, content, marketing] = await Promise.all(
+        completed,
+      )
+
       return res.send(createJsonResponse("success", {
+        totalCandidate,
+        programming,
+        design,
+        content,
+        marketing,
         countUserStep,
         completedTimeline,
       }))

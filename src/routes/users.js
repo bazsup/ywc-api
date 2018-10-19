@@ -1,24 +1,49 @@
-import {Router} from "express"
-import {pick} from "lodash"
+import {
+  Router
+} from "express"
+
+import {
+  pick
+} from "lodash"
+
 import VError from "verror"
 
 import User from "../models/user"
-import {ROLE_STAFF, ROLE_COMMITTEE, ROLE_COMPLETED, ROLE_MANAGER} from "../utils/const"
-import {createJsonResponse} from "../utils/helpers"
-import {authen, adminAuthen} from "../middlewares/authenticator"
+
+import {
+  ROLE_STAFF,
+  ROLE_COMMITTEE,
+  ROLE_COMPLETED,
+  ROLE_MANAGER
+} from "../utils/const"
+
+import {
+  createJsonResponse
+} from "../utils/helpers"
+
+import {
+  authen,
+  adminAuthen
+} from "../middlewares/authenticator"
 
 const router = Router()
 
 // get users id by staff major (for staff grading system)
 router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
-    const {major} = req.admin
+    const {
+      major
+    } = req.admin
 
     const users = await User.find({
       major,
       status: ROLE_COMPLETED,
-      isPassStaff: {$ne: true},
-      failed: {$ne: true},
+      isPassStaff: {
+        $ne: true
+      },
+      failed: {
+        $ne: true
+      },
     }).select("_id major")
 
     return res.json(createJsonResponse("success", users))
@@ -54,13 +79,17 @@ router.get(
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
-      const {major} = req.admin
+      const {
+        major
+      } = req.admin
 
       const users = await User.find({
         major,
         status: ROLE_COMPLETED,
         isPassStaff: true,
-        failed: {$ne: true},
+        failed: {
+          $ne: true
+        },
       }).select("_id major committeeVote")
 
       return res.json(createJsonResponse("success", users))
@@ -79,10 +108,14 @@ router.get(
       const passStaff = await User.count({
         major: req.admin.major,
         isPassStaff: true,
-        failed: {$ne: true},
+        failed: {
+          $ne: true
+        },
       })
 
-      return res.send(createJsonResponse("success", {passStaff}))
+      return res.send(createJsonResponse("success", {
+        passStaff
+      }))
     } catch (e) {
       return next(new VError(e, "/users/committee/stat"))
     }
@@ -132,7 +165,9 @@ router.get(
 
 // get user information and questions from access token
 router.get("/me", authen(), async (req, res, next) => {
-  const user = await User.findOne({_id: req.user._id}).populate("questions")
+  const user = await User.findOne({
+    _id: req.user._id
+  }).populate("questions")
 
   if (!user) {
     return next(new Error("user not found"))
@@ -178,35 +213,93 @@ router.get(
   async (req, res, next) => {
     try {
       const countUserStep = await User.aggregate(
-        [
-          {
-             $addFields: {
-                step_info: {$ne: [{$ifNull: ["$firstName", false]}, false]},
-                step_contact: {$ne: [{$ifNull: ["$phone", false]}, false]},
-                step_insight: {$ne: [{$ifNull: ["$activities", false]}, false]}
-             }
+        [{
+            $addFields: {
+              step_info: {
+                $ne: [{
+                  $ifNull: ["$firstName", false]
+                }, false]
+              },
+              step_contact: {
+                $ne: [{
+                  $ifNull: ["$phone", false]
+                }, false]
+              },
+              step_insight: {
+                $ne: [{
+                  $ifNull: ["$activities", false]
+                }, false]
+              }
+            }
           },
           {
-             $addFields: {
-                step_major: {$and: [ {$eq: ["$step_info", true] }, {$eq: ["$step_contact", true] }, {$eq: ["$step_insight", true] } ]}
-             }
+            $addFields: {
+              step_major: {
+                $and: [{
+                  $eq: ["$step_info", true]
+                }, {
+                  $eq: ["$step_contact", true]
+                }, {
+                  $eq: ["$step_insight", true]
+                }]
+              }
+            }
           },
           {
-             $group: {
-                "_id": {
-                   "major": "$major",
-                   "step_info": "$step_info",
-                   "step_contact": "$step_contact",
-                   "step_insight": "$step_insight",
-                   "step_major": "$step_major"
-                },
-                "userCount": {"$sum": 1}
-             }
+            $group: {
+              "_id": {
+                "major": "$major",
+                "step_info": "$step_info",
+                "step_contact": "$step_contact",
+                "step_insight": "$step_insight",
+                "step_major": "$step_major"
+              },
+              "userCount": {
+                "$sum": 1
+              }
+            }
           }
-       ]
+        ]
       )
+      .cursor({})
+      .exec()
+      .toArray()
 
-      return res.send(createJsonResponse("success", {countUserStep}))
+      const completedTimeline = await User.aggregate(
+        [{
+            $group: {
+              _id: {
+                month: {
+                  $month: "$completed_at"
+                },
+                day: {
+                  $dayOfMonth: "$completed_at"
+                },
+                year: {
+                  $year: "$completed_at"
+                }
+              },
+              count: {
+                $sum: 1
+              }
+            }
+          },
+          {
+            $sort: {
+              "_id.month": 1,
+              "_id.day": 1
+            }
+          }
+        ]
+      )
+      .cursor({})
+      .exec()
+      .toArray()
+
+      return res.send(createJsonResponse("success", {
+        countUserStep,
+        completedTimeline,
+      }))
     } catch (e) {
       return next(new VError(e, "/stat/all"))
     }

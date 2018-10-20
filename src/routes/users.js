@@ -14,7 +14,8 @@ import {
   ROLE_STAFF,
   ROLE_COMMITTEE,
   ROLE_COMPLETED,
-  ROLE_MANAGER
+  ROLE_MANAGER,
+  ROLE_ADMIN
 } from "../utils/const"
 
 import {
@@ -209,7 +210,7 @@ router.get("/stat", async (req, res) => {
 // backoffice candidates stat (dashboard)
 router.get(
   "/stat/all",
-  adminAuthen([ROLE_COMMITTEE, ROLE_MANAGER]),
+  adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
   async (req, res, next) => {
     try {
       const countUserStep = await User.aggregate(
@@ -249,10 +250,10 @@ router.get(
             $group: {
               "_id": {
                 "major": "$major",
-                "step_info": "$step_info",
-                "step_contact": "$step_contact",
-                "step_insight": "$step_insight",
-                "step_major": "$step_major"
+                "stepInfo": "$step_info",
+                "stepContact": "$step_contact",
+                "stepInsight": "$step_insight",
+                "stepMajor": "$step_major"
               },
               "userCount": {
                 "$sum": 1

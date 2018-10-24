@@ -39,6 +39,7 @@ router.get(
         "birthdate",
         "sex",
         "phone",
+        "failed",
         "isPassStaff",
       ]
 

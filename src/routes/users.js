@@ -1,10 +1,6 @@
-import {
-  Router
-} from "express"
+import {Router} from "express"
 
-import {
-  pick
-} from "lodash"
+import {pick} from "lodash"
 
 import VError from "verror"
 
@@ -15,35 +11,89 @@ import {
   ROLE_COMMITTEE,
   ROLE_COMPLETED,
   ROLE_MANAGER,
-  ROLE_ADMIN
+  ROLE_ADMIN,
 } from "../utils/const"
 
-import {
-  createJsonResponse
-} from "../utils/helpers"
+import {createJsonResponse} from "../utils/helpers"
 
-import {
-  authen,
-  adminAuthen
-} from "../middlewares/authenticator"
+import {authen, adminAuthen} from "../middlewares/authenticator"
 
 const router = Router()
+
+// get all users in database
+router.get("/all", async (req, res, next) => {
+  try {
+    const select = [
+      "_id",
+      "facebook",
+      "status",
+      "firstNameEN",
+      "lastNameEN",
+      "nickname",
+      "email",
+      "major",
+      "committeeVote",
+      "birthdate",
+      "sex",
+      "phone",
+      "isPassStaff",
+    ]
+
+    const projectAggregate = select.reduce((prev, curr) => {
+      prev[curr] = 1
+      return prev
+    }, {})
+
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "questions",
+          localField: "questions",
+          foreignField: "_id",
+          as: "questions",
+        },
+      },
+      {
+        $project: {...projectAggregate, questions: 1},
+      },
+      {
+        $addFields: {
+          isAnswerGeneral: {
+            $ne: [{$size: {$ifNull: ["$questions.generalQuestions", []]}}, 0],
+          },
+          isAnswerMajor: {
+            $ne: [{$size: {$ifNull: ["$questions.majorQuestions", []]}}, 0],
+          },
+        },
+      },
+      {
+        $project: {...projectAggregate, isAnswerGeneral: 1, isAnswerMajor: 1},
+      },
+    ])
+      .cursor({})
+      .exec()
+      .toArray()
+
+    return res.json(createJsonResponse("success", users))
+  } catch (e) {
+    console.log(e)
+    return next(new VError("/users/all", e))
+  }
+})
 
 // get users id by staff major (for staff grading system)
 router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
-    const {
-      major
-    } = req.admin
+    const {major} = req.admin
 
     const users = await User.find({
       major,
       status: ROLE_COMPLETED,
       isPassStaff: {
-        $ne: true
+        $ne: true,
       },
       failed: {
-        $ne: true
+        $ne: true,
       },
     }).select("_id major")
 
@@ -80,16 +130,14 @@ router.get(
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
-      const {
-        major
-      } = req.admin
+      const {major} = req.admin
 
       const users = await User.find({
         major,
         status: ROLE_COMPLETED,
         isPassStaff: true,
         failed: {
-          $ne: true
+          $ne: true,
         },
       }).select("_id major committeeVote")
 
@@ -110,19 +158,20 @@ router.get(
         major: req.admin.major,
         isPassStaff: true,
         failed: {
-          $ne: true
+          $ne: true,
         },
       })
 
-      return res.send(createJsonResponse("success", {
-        passStaff
-      }))
+      return res.send(
+        createJsonResponse("success", {
+          passStaff,
+        }),
+      )
     } catch (e) {
       return next(new VError(e, "/users/committee/stat"))
     }
   },
 )
-
 
 // get user data from user id (for committee grading system)
 // return questions, profile (without name and contact information)
@@ -167,7 +216,7 @@ router.get(
 // get user information and questions from access token
 router.get("/me", authen(), async (req, res, next) => {
   const user = await User.findOne({
-    _id: req.user._id
+    _id: req.user._id,
   }).populate("questions")
 
   if (!user) {
@@ -213,89 +262,100 @@ router.get(
   adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
   async (req, res, next) => {
     try {
-      const countUserStep = await User.aggregate(
-        [{
-            $addFields: {
-              step_info: {
-                $ne: [{
-                  $ifNull: ["$firstName", false]
-                }, false]
-              },
-              step_contact: {
-                $ne: [{
-                  $ifNull: ["$phone", false]
-                }, false]
-              },
-              step_insight: {
-                $ne: [{
-                  $ifNull: ["$activities", false]
-                }, false]
-              }
-            }
+      const countUserStep = await User.aggregate([
+        {
+          $addFields: {
+            step_info: {
+              $ne: [
+                {
+                  $ifNull: ["$firstName", false],
+                },
+                false,
+              ],
+            },
+            step_contact: {
+              $ne: [
+                {
+                  $ifNull: ["$phone", false],
+                },
+                false,
+              ],
+            },
+            step_insight: {
+              $ne: [
+                {
+                  $ifNull: ["$activities", false],
+                },
+                false,
+              ],
+            },
           },
-          {
-            $addFields: {
-              step_major: {
-                $and: [{
-                  $eq: ["$step_info", true]
-                }, {
-                  $eq: ["$step_contact", true]
-                }, {
-                  $eq: ["$step_insight", true]
-                }]
-              }
-            }
+        },
+        {
+          $addFields: {
+            step_major: {
+              $and: [
+                {
+                  $eq: ["$step_info", true],
+                },
+                {
+                  $eq: ["$step_contact", true],
+                },
+                {
+                  $eq: ["$step_insight", true],
+                },
+              ],
+            },
           },
-          {
-            $group: {
-              "_id": {
-                "major": "$major",
-                "stepInfo": "$step_info",
-                "stepContact": "$step_contact",
-                "stepInsight": "$step_insight",
-                "stepMajor": "$step_major"
-              },
-              "userCount": {
-                "$sum": 1
-              }
-            }
-          }
-        ]
-      )
-      .cursor({})
-      .exec()
-      .toArray()
+        },
+        {
+          $group: {
+            _id: {
+              major: "$major",
+              stepInfo: "$step_info",
+              stepContact: "$step_contact",
+              stepInsight: "$step_insight",
+              stepMajor: "$step_major",
+            },
+            userCount: {
+              $sum: 1,
+            },
+          },
+        },
+      ])
+        .cursor({})
+        .exec()
+        .toArray()
 
-      const completedTimeline = await User.aggregate(
-        [{
-            $group: {
-              _id: {
-                month: {
-                  $month: "$completed_at"
-                },
-                day: {
-                  $dayOfMonth: "$completed_at"
-                },
-                year: {
-                  $year: "$completed_at"
-                }
+      const completedTimeline = await User.aggregate([
+        {
+          $group: {
+            _id: {
+              month: {
+                $month: "$completed_at",
               },
-              count: {
-                $sum: 1
-              }
-            }
+              day: {
+                $dayOfMonth: "$completed_at",
+              },
+              year: {
+                $year: "$completed_at",
+              },
+            },
+            count: {
+              $sum: 1,
+            },
           },
-          {
-            $sort: {
-              "_id.month": 1,
-              "_id.day": 1
-            }
-          }
-        ]
-      )
-      .cursor({})
-      .exec()
-      .toArray()
+        },
+        {
+          $sort: {
+            "_id.month": 1,
+            "_id.day": 1,
+          },
+        },
+      ])
+        .cursor({})
+        .exec()
+        .toArray()
 
       const totalCandidate = await User.count({})
 
@@ -309,15 +369,17 @@ router.get(
         completed,
       )
 
-      return res.send(createJsonResponse("success", {
-        totalCandidate,
-        programming,
-        design,
-        content,
-        marketing,
-        countUserStep,
-        completedTimeline,
-      }))
+      return res.send(
+        createJsonResponse("success", {
+          totalCandidate,
+          programming,
+          design,
+          content,
+          marketing,
+          countUserStep,
+          completedTimeline,
+        }),
+      )
     } catch (e) {
       return next(new VError(e, "/stat/all"))
     }

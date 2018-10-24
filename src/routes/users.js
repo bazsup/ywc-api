@@ -32,6 +32,8 @@ router.get(
         "status",
         "firstNameEN",
         "lastNameEN",
+        "firstName",
+        "lastName",
         "nickname",
         "email",
         "major",

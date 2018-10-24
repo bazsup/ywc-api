@@ -21,65 +21,69 @@ import {authen, adminAuthen} from "../middlewares/authenticator"
 const router = Router()
 
 // get all users in database
-router.get("/all", async (req, res, next) => {
-  try {
-    const select = [
-      "_id",
-      "facebook",
-      "status",
-      "firstNameEN",
-      "lastNameEN",
-      "nickname",
-      "email",
-      "major",
-      "committeeVote",
-      "birthdate",
-      "sex",
-      "phone",
-      "isPassStaff",
-    ]
+router.get(
+  "/all",
+  adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
+  async (req, res, next) => {
+    try {x
+      const select = [
+        "_id",
+        "facebook",
+        "status",
+        "firstNameEN",
+        "lastNameEN",
+        "nickname",
+        "email",
+        "major",
+        "committeeVote",
+        "birthdate",
+        "sex",
+        "phone",
+        "isPassStaff",
+      ]
 
-    const projectAggregate = select.reduce((prev, curr) => {
-      prev[curr] = 1
-      return prev
-    }, {})
+      const projectAggregate = select.reduce((prev, curr) => {
+        prev[curr] = 1
+        return prev
+      }, {})
 
-    const users = await User.aggregate([
-      {
-        $lookup: {
-          from: "questions",
-          localField: "questions",
-          foreignField: "_id",
-          as: "questions",
-        },
-      },
-      {
-        $project: {...projectAggregate, questions: 1},
-      },
-      {
-        $addFields: {
-          isAnswerGeneral: {
-            $ne: [{$size: {$ifNull: ["$questions.generalQuestions", []]}}, 0],
-          },
-          isAnswerMajor: {
-            $ne: [{$size: {$ifNull: ["$questions.majorQuestions", []]}}, 0],
+      const users = await User.aggregate([
+        {
+          $lookup: {
+            from: "questions",
+            localField: "questions",
+            foreignField: "_id",
+            as: "questions",
           },
         },
-      },
-      {
-        $project: {...projectAggregate, isAnswerGeneral: 1, isAnswerMajor: 1},
-      },
-    ])
-      .cursor({})
-      .exec()
-      .toArray()
+        {
+          $project: {...projectAggregate, questions: 1},
+        },
+        {
+          $addFields: {
+            isAnswerGeneral: {
+              $ne: [{$size: {$ifNull: ["$questions.generalQuestions", []]}}, 0],
+            },
+            isAnswerMajor: {
+              $ne: [{$size: {$ifNull: ["$questions.majorQuestions", []]}}, 0],
+            },
+          },
+        },
+        {
+          $project: {...projectAggregate, isAnswerGeneral: 1, isAnswerMajor: 1},
+        },
+      ])
+        .cursor({})
+        .exec()
+        .toArray()
 
-    return res.json(createJsonResponse("success", users))
-  } catch (e) {
-    console.log(e)
-    return next(new VError("/users/all", e))
-  }
-})
+      return res.json(createJsonResponse("success", users))
+    } catch (e) {
+      console.log(e)
+      return next(new VError("/users/all", e))
+    }
+  },
+)
 
 // get users id by staff major (for staff grading system)
 router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {

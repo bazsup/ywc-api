@@ -211,6 +211,19 @@ router.get(
   },
 )
 
+// get user profile and questions
+router.get("/profile/:id", adminAuthen([ROLE_ADMIN, ROLE_MANAGER]), async (req, res, next) => {
+  const userID = req.params.id
+
+  try {
+    const user = await User.findById(userID).populate("questions")
+
+    return res.json(createJsonResponse("success", user))
+  } catch (e) {
+    return next(new VError(`/users/profile/${userID}`, e))
+  }
+})
+
 // get all candidates (users)
 // router.get("/", adminAuthen("admin"), async (req, res) => {
 //   const users = await User.find().select(

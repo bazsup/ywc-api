@@ -35,7 +35,7 @@ router.get(
         "nickname",
         "email",
         "major",
-        "committeeVote",
+        "committeeScore",
         "birthdate",
         "sex",
         "phone",

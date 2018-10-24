@@ -25,7 +25,7 @@ router.get(
   "/all",
   adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
   async (req, res, next) => {
-    try {x
+    try {
       const select = [
         "_id",
         "facebook",
@@ -79,8 +79,7 @@ router.get(
 
       return res.json(createJsonResponse("success", users))
     } catch (e) {
-      console.log(e)
-      return next(new VError("/users/all", e))
+      return next(new VError("/users/all: %s", e.message))
     }
   },
 )

@@ -98,8 +98,15 @@ const schema = new Schema({
   committeeVote: [String],
   committeeScore: Number,
 
+  // candidate reservation status
+  isReservation: Boolean,
+
   // is user pass to interview
   passInterview: Boolean,
+  interviewID: String,
+
+  // after interview state
+  isFinalist: Boolean,
 })
 
 export default mongoose.model("User", schema)

@@ -25,10 +25,11 @@ mongoose.connect(
     reconnectInterval: 500,
   },
 )
-mongoose.connection.on("error", () => {
+mongoose.connection.on("error", (err) => {
   console.error(
     "MongoDB Connection Error. Please make sure that MongoDB is running.",
   )
+  console.error("Error", err)
   process.exit(1)
 })
 

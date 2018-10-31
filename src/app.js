@@ -15,6 +15,8 @@ import {errorHandler} from "./middlewares/error"
 
 // const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
+console.log("connecting to", process.env.MONGODB_URI)
+
 mongoose.connect(
   process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
   {

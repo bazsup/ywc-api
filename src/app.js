@@ -18,7 +18,7 @@ import {errorHandler} from "./middlewares/error"
 console.log("connecting to", process.env.MONGODB_URI)
 
 mongoose.connect(
-  process.env.MONGODB_URI || process.env.MONGOLAB_URI || config.MONGODB_URI,
+  "mongodb://ywc16:ywc2018@ds145113.mlab.com:45113/ywc",
   {
     useMongoClient: true,
     reconnectTries: Number.MAX_VALUE,

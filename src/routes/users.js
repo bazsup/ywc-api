@@ -145,7 +145,7 @@ router.get(
         failed: {
           $ne: true,
         },
-      }).select("_id major committeeVote")
+      }).select("_id major committeeVote committeeScore")
 
       return res.json(createJsonResponse("success", users))
     } catch (e) {

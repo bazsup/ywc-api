@@ -109,7 +109,7 @@ router.post(
 
       return res.send(createJsonResponse("success"))
     } catch (e) {
-      return next(new VError(e, "/manager/vote"))
+      return next(new VError(e, "/manager/status"))
     }
   },
 )

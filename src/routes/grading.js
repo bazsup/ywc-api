@@ -3,7 +3,7 @@ import _ from "lodash"
 import VError from "verror"
 import {Admin, User, Question} from "../models"
 import {adminAuthen} from "../middlewares/authenticator"
-import {ROLE_STAFF, ROLE_COMMITTEE} from "../utils/const"
+import {ROLE_STAFF, ROLE_COMMITTEE, ROLE_MANAGER} from "../utils/const"
 import {responseError} from "../middlewares/error"
 import {createJsonResponse} from "../utils"
 
@@ -76,6 +76,28 @@ router.post("/staff/eject", adminAuthen(ROLE_STAFF), async (req, res, next) => {
     return next(new VError(e, "/staff/eject"))
   }
 })
+
+router.post(
+  "/manager/score",
+  adminAuthen(ROLE_MANAGER),
+  async (req, res, next) => {
+    try {
+      const {id, score} = req.body
+      const user = await User.findOne({_id: id})
+
+      if (!user) {
+        return responseError(res, "user not found")
+      }
+
+      user.committeeScore = +score
+      await user.save()
+
+      return res.send(createJsonResponse("success"))
+    } catch (e) {
+      return next(new VError(e, "/manager/vote"))
+    }
+  },
+)
 
 router.post(
   "/committee/vote",

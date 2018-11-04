@@ -78,33 +78,11 @@ router.post("/staff/eject", adminAuthen(ROLE_STAFF), async (req, res, next) => {
 })
 
 router.post(
-  "/manager/score",
-  adminAuthen(ROLE_MANAGER),
-  async (req, res, next) => {
-    try {
-      const {id, score} = req.body
-      const user = await User.findOne({_id: id})
-
-      if (!user) {
-        return responseError(res, "user not found")
-      }
-
-      user.committeeScore = +score
-      await user.save()
-
-      return res.send(createJsonResponse("success"))
-    } catch (e) {
-      return next(new VError(e, "/manager/vote"))
-    }
-  },
-)
-
-router.post(
   "/manager/status",
   adminAuthen(ROLE_MANAGER),
   async (req, res, next) => {
     try {
-      const {id, reservation, interview, finalist} = req.body
+      const {id, score, reservation, interview, finalist} = req.body
       const user = await User.findOne({_id: id})
 
       if (!user) {
@@ -121,6 +99,10 @@ router.post(
 
       if (finalist !== undefined) {
         user.isFinalist = finalist
+      }
+
+      if (score !== undefined) {
+        user.committeeScore = +score
       }
 
       await user.save()

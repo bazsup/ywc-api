@@ -103,7 +103,7 @@ const schema = new Schema({
 
   // is user pass to interview
   passInterview: Boolean,
-  interviewID: String,
+  interviewRef: String,
 
   // after interview state
   isFinalist: Boolean,

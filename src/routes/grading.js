@@ -82,7 +82,7 @@ router.post(
   adminAuthen(ROLE_MANAGER),
   async (req, res, next) => {
     try {
-      const {id, score, reservation, interview, finalist} = req.body
+      const {id, score, reservation, interview, finalist, interviewRef} = req.body
       const user = await User.findOne({_id: id})
 
       if (!user) {
@@ -103,6 +103,10 @@ router.post(
 
       if (score !== undefined) {
         user.committeeScore = +score
+      }
+
+      if (interviewRef !== undefined) {
+        user.interviewRef = interviewRef
       }
 
       await user.save()

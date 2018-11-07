@@ -1,7 +1,6 @@
 import {Router} from "express";
 
 import users from "./users";
-import admin from "./admin";
 import auth from "./auth";
 import registration from "./registration";
 import grading from "./grading";
@@ -16,7 +15,6 @@ router.get("/", (req, res, next) => {
 });
 
 router.use("/users", users);
-router.use("/admin", admin);
 router.use("/auth", auth);
 router.use("/registration", registration);
 router.use("/grading", grading);

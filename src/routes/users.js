@@ -1,10 +1,10 @@
-import {Router} from "express"
+import {Router} from "express";
 
-import {pick} from "lodash"
+import {pick} from "lodash";
 
-import VError from "verror"
+import VError from "verror";
 
-import User from "../models/user"
+import User from "../models/user";
 
 import {
   ROLE_STAFF,
@@ -12,13 +12,13 @@ import {
   ROLE_COMPLETED,
   ROLE_MANAGER,
   ROLE_ADMIN,
-} from "../utils/const"
+} from "../utils/const";
 
-import {createJsonResponse} from "../utils/helpers"
+import {createJsonResponse} from "../utils/helpers";
 
-import {authen, adminAuthen} from "../middlewares/authenticator"
+import {authen, adminAuthen} from "../middlewares/authenticator";
 
-const router = Router()
+const router = Router();
 
 // get all users in database
 router.get(
@@ -43,12 +43,12 @@ router.get(
         "phone",
         "failed",
         "isPassStaff",
-      ]
+      ];
 
       const projectAggregate = select.reduce((prev, curr) => {
-        prev[curr] = 1
-        return prev
-      }, {})
+        prev[curr] = 1;
+        return prev;
+      }, {});
 
       const users = await User.aggregate([
         {
@@ -78,19 +78,19 @@ router.get(
       ])
         .cursor({})
         .exec()
-        .toArray()
+        .toArray();
 
-      return res.json(createJsonResponse("success", users))
+      return res.json(createJsonResponse("success", users));
     } catch (e) {
-      return next(new VError("/users/all: %s", e.message))
+      return next(new VError("/users/all: %s", e.message));
     }
   },
-)
+);
 
 // get users id by staff major (for staff grading system)
 router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
-    const {major} = req.admin
+    const {major} = req.admin;
 
     const users = await User.find({
       major,
@@ -101,20 +101,20 @@ router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
       failed: {
         $ne: true,
       },
-    }).select("_id major")
+    }).select("_id major");
 
-    return res.json(createJsonResponse("success", users))
+    return res.json(createJsonResponse("success", users));
   } catch (e) {
-    return next(new VError("/users/staff", e))
+    return next(new VError("/users/staff", e));
   }
-})
+});
 
 // get user general question from user id (for staff grading system)
 router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
-  const userID = req.params.id
+  const userID = req.params.id;
 
   try {
-    const user = await User.findById(userID).populate("questions")
+    const user = await User.findById(userID).populate("questions");
 
     const data = pick(user, [
       "birthdate",
@@ -122,13 +122,13 @@ router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
       "educationStatus",
       "questions",
       "major",
-    ])
+    ]);
 
-    return res.json(createJsonResponse("success", data))
+    return res.json(createJsonResponse("success", data));
   } catch (e) {
-    return next(new VError(`/users/staff/${userID}`, e))
+    return next(new VError(`/users/staff/${userID}`, e));
   }
-})
+});
 
 // get users id by committee major (for committee grading system)
 router.get(
@@ -136,7 +136,7 @@ router.get(
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
-      const {major} = req.admin
+      const {major} = req.admin;
 
       const users = await User.find({
         major,
@@ -145,14 +145,14 @@ router.get(
         failed: {
           $ne: true,
         },
-      }).select("_id major committeeVote committeeScore")
+      }).select("_id major committeeVote committeeScore");
 
-      return res.json(createJsonResponse("success", users))
+      return res.json(createJsonResponse("success", users));
     } catch (e) {
-      return next(new VError("/users/committee", e))
+      return next(new VError("/users/committee", e));
     }
   },
-)
+);
 
 // get only staff pass (tend to be deprecated)
 router.get(
@@ -166,18 +166,18 @@ router.get(
         failed: {
           $ne: true,
         },
-      })
+      });
 
       return res.send(
         createJsonResponse("success", {
           passStaff,
         }),
-      )
+      );
     } catch (e) {
-      return next(new VError(e, "/users/committee/stat"))
+      return next(new VError(e, "/users/committee/stat"));
     }
   },
-)
+);
 
 // get user data from user id (for committee grading system)
 // return questions, profile (without name and contact information)
@@ -185,10 +185,10 @@ router.get(
   "/committee/:id",
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
-    const userID = req.params.id
+    const userID = req.params.id;
 
     try {
-      const user = await User.findById(userID).populate("questions")
+      const user = await User.findById(userID).populate("questions");
 
       const data = pick(user, [
         "academicYear",
@@ -202,27 +202,31 @@ router.get(
         "major",
         "staffComment",
         "staffUsername",
-      ])
+      ]);
 
-      return res.json(createJsonResponse("success", data))
+      return res.json(createJsonResponse("success", data));
     } catch (e) {
-      return next(new VError(`/users/committee/${userID}`, e))
+      return next(new VError(`/users/committee/${userID}`, e));
     }
   },
-)
+);
 
 // get user profile and questions
-router.get("/profile/:id", adminAuthen([ROLE_ADMIN, ROLE_MANAGER]), async (req, res, next) => {
-  const userID = req.params.id
+router.get(
+  "/profile/:id",
+  adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
+  async (req, res, next) => {
+    const userID = req.params.id;
 
-  try {
-    const user = await User.findById(userID).populate("questions")
+    try {
+      const user = await User.findById(userID).populate("questions");
 
-    return res.json(createJsonResponse("success", user))
-  } catch (e) {
-    return next(new VError(`/users/profile/${userID}`, e))
-  }
-})
+      return res.json(createJsonResponse("success", user));
+    } catch (e) {
+      return next(new VError(`/users/profile/${userID}`, e));
+    }
+  },
+);
 
 // get all candidates (users)
 // router.get("/", adminAuthen("admin"), async (req, res) => {
@@ -236,31 +240,31 @@ router.get("/profile/:id", adminAuthen([ROLE_ADMIN, ROLE_MANAGER]), async (req, 
 router.get("/me", authen(), async (req, res, next) => {
   const user = await User.findOne({
     _id: req.user._id,
-  }).populate("questions")
+  }).populate("questions");
 
   if (!user) {
-    return next(new Error("user not found"))
+    return next(new Error("user not found"));
   }
 
-  return res.send(createJsonResponse("success", user))
-})
+  return res.send(createJsonResponse("success", user));
+});
 
 // show completed-user stat
 router.get("/stat", async (req, res) => {
   try {
     // query total number of completed registration user
     const completed = ["programming", "design", "content", "marketing"].map(
-      (major) => {
+      major => {
         return User.count({
           status: "completed",
           major,
-        })
+        });
       },
-    )
+    );
 
     const [programming, design, content, marketing] = await Promise.all(
       completed,
-    )
+    );
 
     return res.json(
       createJsonResponse("success", {
@@ -269,11 +273,11 @@ router.get("/stat", async (req, res) => {
         content,
         marketing,
       }),
-    )
+    );
   } catch (err) {
-    return next(new VError("/stat:", err))
+    return next(new VError("/stat:", err));
   }
-})
+});
 
 // backoffice candidates stat (dashboard)
 router.get(
@@ -344,7 +348,7 @@ router.get(
       ])
         .cursor({})
         .exec()
-        .toArray()
+        .toArray();
 
       const completedTimeline = await User.aggregate([
         {
@@ -374,19 +378,19 @@ router.get(
       ])
         .cursor({})
         .exec()
-        .toArray()
+        .toArray();
 
-      const totalCandidate = await User.count({})
+      const totalCandidate = await User.count({});
 
       const completed = ["programming", "design", "content", "marketing"].map(
-        (major) => {
-          return User.count({major})
+        major => {
+          return User.count({major});
         },
-      )
+      );
 
       const [programming, design, content, marketing] = await Promise.all(
         completed,
-      )
+      );
 
       return res.send(
         createJsonResponse("success", {
@@ -398,11 +402,11 @@ router.get(
           countUserStep,
           completedTimeline,
         }),
-      )
+      );
     } catch (e) {
-      return next(new VError(e, "/stat/all"))
+      return next(new VError(e, "/stat/all"));
     }
   },
-)
+);
 
-export default router
+export default router;

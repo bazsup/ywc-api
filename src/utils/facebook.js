@@ -1,6 +1,6 @@
-import fb from "fb"
+import fb from "fb";
 
-export const getFacebookUser = (accessToken) =>
+export const getFacebookUser = accessToken =>
   new Promise((resolve, reject) => {
     fb.napi(
       "/me",
@@ -9,5 +9,5 @@ export const getFacebookUser = (accessToken) =>
         access_token: accessToken,
       },
       (err, data) => (err ? reject(err) : resolve(data)),
-    )
-  })
+    );
+  });

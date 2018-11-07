@@ -1,5 +1,5 @@
-const mongoose = require("mongoose")
-const {Schema} = mongoose
+const mongoose = require("mongoose");
+const {Schema} = mongoose;
 
 const schema = new Schema({
   __v: {type: Number, select: false},
@@ -14,6 +14,6 @@ const schema = new Schema({
     required: true,
     enum: ["staff", "committee", "admin", "manager"],
   },
-})
+});
 
-export default mongoose.model("Admin", schema)
+export default mongoose.model("Admin", schema);

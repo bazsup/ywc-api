@@ -1,8 +1,8 @@
 // registration deadline config
-export const deadline = "2018-11-2"
+export const deadline = "2018-11-2";
 
 // general question array size
-export const generalQuestionSize = 3
+export const generalQuestionSize = 3;
 
 // major question array size
 export const majorQuestionSize = {
@@ -10,7 +10,7 @@ export const majorQuestionSize = {
   content: 3,
   marketing: 3,
   programming: 4,
-}
+};
 
 // questions (general & special)
 export const questions = {
@@ -41,4 +41,4 @@ export const questions = {
     "จงยกตัวอย่างธุรกิจที่คุณคิดว่าเหมาะที่จะใช้คำว่า Disrupt ที่สุดมา 1 ธุรกิจ และจงอธิบายว่าเพราะอะไรจึงคิดเช่นนั้น",
     "จงยกตัวอย่างธุรกิจเว็บไซต์ หรือแอพพลิเคชั่นที่คุณรู้จัก (เช่น Grab, Ookbee, Agoda ฯลฯ) มา 1 ธุรกิจ แล้วสมมติว่าธุรกิจดังกล่าวเป็นธุรกิจใหม่ที่เพิ่งจะเปิดตัวในตลาดประเทศไทย มีงบการตลาดสำหรับสื่อสารและประชาสัมพันธ์เดือนละ 1 แสนบาท จงอธิบายว่าคุณจะใช้กลยุทธ์ทางการสื่อสารการตลาดอย่างไร ผ่านช่องทางใด อย่างไรบ้าง เพื่อให้ธุรกิจประสบความสำเร็จมากที่สุดภายในระยะเวลา 12 เดือน (คำตอบไม่เกิน 1 หน้า A4 โดยประมาณ)",
   ],
-}
+};

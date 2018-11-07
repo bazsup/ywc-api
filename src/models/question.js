@@ -1,12 +1,12 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
-const {Schema} = mongoose
-import _ from "lodash"
+const {Schema} = mongoose;
+import _ from "lodash";
 
 const answerSchema = new Schema({
   answer: String,
   point: {type: Number, select: false, default: 0},
-})
+});
 
 const schema = new Schema({
   confirmedMajor: {
@@ -15,6 +15,6 @@ const schema = new Schema({
   },
   generalQuestions: [answerSchema],
   majorQuestions: [answerSchema],
-})
+});
 
-export default mongoose.model("Question", schema)
+export default mongoose.model("Question", schema);

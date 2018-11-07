@@ -1,10 +1,6 @@
 import {Router} from "express";
-
 import {pick} from "lodash";
-
 import VError from "verror";
-
-import User from "../models/user";
 
 import {
   ROLE_STAFF,
@@ -14,8 +10,8 @@ import {
   ROLE_ADMIN,
 } from "../utils/const";
 
+import User from "../models/user";
 import {createJsonResponse} from "../utils/helpers";
-
 import {authen, adminAuthen} from "../middlewares/authenticator";
 
 const router = Router();
@@ -227,14 +223,6 @@ router.get(
     }
   },
 );
-
-// get all candidates (users)
-// router.get("/", adminAuthen("admin"), async (req, res) => {
-//   const users = await User.find().select(
-//     "_id major title firstName lastName firstNameEN lastNameEN email nickname completed_at status major completed",
-//   )
-//   return res.send(users)
-// })
 
 // get user information and questions from access token
 router.get("/me", authen(), async (req, res, next) => {

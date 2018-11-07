@@ -1,7 +1,7 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const {Schema} = mongoose
-const {ObjectId} = Schema.Types
+const {Schema} = mongoose;
+const {ObjectId} = Schema.Types;
 
 const schema = new Schema({
   facebook: String,
@@ -107,6 +107,6 @@ const schema = new Schema({
 
   // after interview state
   isFinalist: Boolean,
-})
+});
 
-export default mongoose.model("User", schema)
+export default mongoose.model("User", schema);

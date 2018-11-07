@@ -5,7 +5,7 @@ import {Admin, User, Question} from "../models";
 import {adminAuthen} from "../middlewares/authenticator";
 import {ROLE_STAFF, ROLE_COMMITTEE, ROLE_MANAGER} from "../utils/const";
 import {responseError} from "../middlewares/error";
-import {createJsonResponse} from "../utils";
+import {createJsonResponse} from "../utils/helpers";
 
 const router = Router();
 

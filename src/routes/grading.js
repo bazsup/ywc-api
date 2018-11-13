@@ -114,11 +114,22 @@ router.post(
         interview,
         finalist,
         interviewRef,
+
+        reservationNo,
+        verificationAmount,
       } = req.body;
       const user = await User.findOne({_id: id});
 
       if (!user) {
         return responseError(res, "user not found");
+      }
+
+      if (reservationNo !== undefined) {
+        user.reservationNo = reservationNo;
+      }
+
+      if (verificationAmount !== undefined) {
+        user.verificationAmount = verificationAmount;
       }
 
       if (reservation !== undefined) {

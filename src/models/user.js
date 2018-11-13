@@ -100,6 +100,7 @@ const schema = new Schema({
 
   // candidate reservation status
   isReservation: Boolean,
+  reservationNo: Number,
 
   // is user pass to interview
   passInterview: Boolean,
@@ -107,6 +108,7 @@ const schema = new Schema({
 
   // after interview state
   isFinalist: Boolean,
+  verificationAmount: Number,
 });
 
 export default mongoose.model("User", schema);

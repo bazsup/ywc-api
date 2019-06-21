@@ -22,7 +22,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-        
+
       # run tests!
       # - run: yarn test
   deploy_to_staging:
@@ -30,7 +30,7 @@ jobs:
       - image: google/cloud-sdk
     environment:
       - PROJECT_NAME: "backend"
-      - GOOGLE_PROJECT_ID: "ywc-backend-16" 
+      - GOOGLE_PROJECT_ID: "ywc-backend-16"
       - GOOGLE_COMPUTE_ZONE: "asia-southeast1-a"
       - GOOGLE_CLUSTER_NAME: "backend-cluster"
     steps:
@@ -66,9 +66,9 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - deploy_to_staging:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+      # - deploy_to_staging:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only: master

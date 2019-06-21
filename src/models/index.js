@@ -1,7 +1,7 @@
-import Question from './question'
-import User from './user'
-import Admin from './admin'
+import QuestionModel from './question'
+import UserModel from './user'
+import AdminModel from './admin'
 
-export default {
-  Question, User, Admin
-}
+export const Question = QuestionModel
+export const User = UserModel
+export const Admin = AdminModel

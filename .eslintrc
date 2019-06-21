@@ -23,10 +23,10 @@
       {
         "printWidth": 80,
         "tabWidth": 2,
-        "singleQuote": false,
+        "singleQuote": true,
         "trailingComma": "all",
-        "bracketSpacing": false,
-        "semi": true,
+        "bracketSpacing": true,
+        "semi": false,
         "useTabs": false,
         "parser": "babylon",
         "jsxBracketSameLine": true
@@ -41,6 +41,9 @@
     "import/named": 2,
     "import/namespace": 2,
     "import/default": 2,
-    "import/export": 2
+    "import/export": 2,
+    "import/first": false,
+    "import/no-named-default": false,
+    "import/no-webpack-loader-syntax": false
   }
 }

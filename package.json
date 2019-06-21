@@ -23,7 +23,7 @@
   "homepage": "https://github.com/chunza2542/ywc-api#readme",
   "dependencies": {
     "babel-plugin-transform-runtime": "^6.15.0",
-    "bcrypt-nodejs": "0.0.3",
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.15.2",
     "cloudinary": "^1.4.1",
     "compression": "^1.6.2",

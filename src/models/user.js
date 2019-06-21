@@ -1,22 +1,22 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
-const {Schema} = mongoose;
-const {ObjectId} = Schema.Types;
+const { Schema } = mongoose
+const { ObjectId } = Schema.Types
 
 const schema = new Schema({
   facebook: String,
   status: {
     type: String,
-    enum: ["in progress", "completed"],
+    enum: ['in progress', 'completed'],
   },
-  questions: {type: ObjectId, ref: "Question"},
+  questions: { type: ObjectId, ref: 'Question' },
   completed_at: Date,
   profile: String,
 
   // Step 1: user information
   title: {
     type: String,
-    enum: ["นาย", "นางสาว"],
+    enum: ['นาย', 'นางสาว'],
   },
   firstName: String,
   lastName: String,
@@ -33,30 +33,30 @@ const schema = new Schema({
   academicYear: {
     type: String,
     enum: [
-      "ปี 1",
-      "ปี 2",
-      "ปี 3",
-      "ปี 4",
-      "ปี 5",
-      "ปี 6",
-      "ปวส. ปี 1",
-      "ปวส. ปี 2",
-      "-",
+      'ปี 1',
+      'ปี 2',
+      'ปี 3',
+      'ปี 4',
+      'ปี 5',
+      'ปี 6',
+      'ปวส. ปี 1',
+      'ปวส. ปี 2',
+      '-',
     ],
   },
   university: String,
   sex: {
     type: String,
-    enum: ["ชาย", "หญิง", "อื่นๆ"],
+    enum: ['ชาย', 'หญิง', 'อื่นๆ'],
   },
   birthdate: Date,
   religion: {
     type: String,
-    enum: ["พุทธ", "คริสต์", "อิสลาม", "พราหมณ์", "ซิกข์", "ไม่ระบุ"],
+    enum: ['พุทธ', 'คริสต์', 'อิสลาม', 'พราหมณ์', 'ซิกข์', 'ไม่ระบุ'],
   },
   blood: {
     type: String,
-    enum: ["A", "B", "O", "AB"],
+    enum: ['A', 'B', 'O', 'AB'],
   },
   age: Number,
 
@@ -84,7 +84,7 @@ const schema = new Schema({
 
   major: {
     type: String,
-    enum: ["content", "programming", "design", "marketing"],
+    enum: ['content', 'programming', 'design', 'marketing'],
   },
 
   // grading system
@@ -109,6 +109,6 @@ const schema = new Schema({
   // after interview state
   isFinalist: Boolean,
   verificationAmount: Number,
-});
+})
 
-export default mongoose.model("User", schema);
+export default mongoose.model('User', schema)

@@ -1,6 +1,6 @@
-import {Router} from "express";
-import {pick} from "lodash";
-import VError from "verror";
+import { Router } from 'express'
+import { pick } from 'lodash'
+import VError from 'verror'
 
 import {
   ROLE_STAFF,
@@ -8,85 +8,95 @@ import {
   ROLE_COMPLETED,
   ROLE_MANAGER,
   ROLE_ADMIN,
-} from "../utils/const";
+} from '../utils/const'
 
-import User from "../models/user";
-import {createJsonResponse} from "../utils/helpers";
-import {authen, adminAuthen} from "../middlewares/authenticator";
+import User from '../models/user'
+import { createJsonResponse } from '../utils/helpers'
+import { authen, adminAuthen } from '../middlewares/authenticator'
 
-const router = Router();
+const router = Router()
 
 // get all users in database
 router.get(
-  "/all",
+  '/all',
   adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
   async (req, res, next) => {
     try {
       const select = [
-        "_id",
-        "facebook",
-        "status",
-        "firstNameEN",
-        "lastNameEN",
-        "firstName",
-        "lastName",
-        "nickname",
-        "email",
-        "major",
-        "committeeScore",
-        "birthdate",
-        "sex",
-        "phone",
-        "failed",
-        "isPassStaff",
-      ];
+        '_id',
+        'facebook',
+        'status',
+        'firstNameEN',
+        'lastNameEN',
+        'firstName',
+        'lastName',
+        'nickname',
+        'email',
+        'major',
+        'committeeScore',
+        'birthdate',
+        'sex',
+        'phone',
+        'failed',
+        'isPassStaff',
+      ]
 
       const projectAggregate = select.reduce((prev, curr) => {
-        prev[curr] = 1;
-        return prev;
-      }, {});
+        prev[curr] = 1
+        return prev
+      }, {})
 
       const users = await User.aggregate([
         {
           $lookup: {
-            from: "questions",
-            localField: "questions",
-            foreignField: "_id",
-            as: "questions",
+            from: 'questions',
+            localField: 'questions',
+            foreignField: '_id',
+            as: 'questions',
           },
         },
         {
-          $project: {...projectAggregate, questions: 1},
+          $project: { ...projectAggregate, questions: 1 },
         },
         {
           $addFields: {
             isAnswerGeneral: {
-              $ne: [{$size: {$ifNull: ["$questions.generalQuestions", []]}}, 0],
+              $ne: [
+                { $size: { $ifNull: ['$questions.generalQuestions', []] } },
+                0,
+              ],
             },
             isAnswerMajor: {
-              $ne: [{$size: {$ifNull: ["$questions.majorQuestions", []]}}, 0],
+              $ne: [
+                { $size: { $ifNull: ['$questions.majorQuestions', []] } },
+                0,
+              ],
             },
           },
         },
         {
-          $project: {...projectAggregate, isAnswerGeneral: 1, isAnswerMajor: 1},
+          $project: {
+            ...projectAggregate,
+            isAnswerGeneral: 1,
+            isAnswerMajor: 1,
+          },
         },
       ])
         .cursor({})
         .exec()
-        .toArray();
+        .toArray()
 
-      return res.json(createJsonResponse("success", users));
+      return res.json(createJsonResponse('success', users))
     } catch (e) {
-      return next(new VError("/users/all: %s", e.message));
+      return next(new VError('/users/all: %s', e.message))
     }
   },
-);
+)
 
 // get users id by staff major (for staff grading system)
-router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
+router.get('/staff', adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
-    const {major} = req.admin;
+    const { major } = req.admin
 
     const users = await User.find({
       major,
@@ -97,42 +107,42 @@ router.get("/staff", adminAuthen(ROLE_STAFF), async (req, res, next) => {
       failed: {
         $ne: true,
       },
-    }).select("_id major");
+    }).select('_id major')
 
-    return res.json(createJsonResponse("success", users));
+    return res.json(createJsonResponse('success', users))
   } catch (e) {
-    return next(new VError("/users/staff", e));
+    return next(new VError('/users/staff', e))
   }
-});
+})
 
 // get user general question from user id (for staff grading system)
-router.get("/staff/:id", adminAuthen(ROLE_STAFF), async (req, res, next) => {
-  const userID = req.params.id;
+router.get('/staff/:id', adminAuthen(ROLE_STAFF), async (req, res, next) => {
+  const userID = req.params.id
 
   try {
-    const user = await User.findById(userID).populate("questions");
+    const user = await User.findById(userID).populate('questions')
 
     const data = pick(user, [
-      "birthdate",
-      "sex",
-      "educationStatus",
-      "questions",
-      "major",
-    ]);
+      'birthdate',
+      'sex',
+      'educationStatus',
+      'questions',
+      'major',
+    ])
 
-    return res.json(createJsonResponse("success", data));
+    return res.json(createJsonResponse('success', data))
   } catch (e) {
-    return next(new VError(`/users/staff/${userID}`, e));
+    return next(new VError(`/users/staff/${userID}`, e))
   }
-});
+})
 
 // get users id by committee major (for committee grading system)
 router.get(
-  "/committee",
+  '/committee',
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
-      const {major} = req.admin;
+      const { major } = req.admin
 
       const users = await User.find({
         major,
@@ -141,18 +151,18 @@ router.get(
         failed: {
           $ne: true,
         },
-      }).select("_id major committeeVote committeeScore");
+      }).select('_id major committeeVote committeeScore')
 
-      return res.json(createJsonResponse("success", users));
+      return res.json(createJsonResponse('success', users))
     } catch (e) {
-      return next(new VError("/users/committee", e));
+      return next(new VError('/users/committee', e))
     }
   },
-);
+)
 
 // get only staff pass (tend to be deprecated)
 router.get(
-  "/committee/stat",
+  '/committee/stat',
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
     try {
@@ -162,114 +172,114 @@ router.get(
         failed: {
           $ne: true,
         },
-      });
+      })
 
       return res.send(
-        createJsonResponse("success", {
+        createJsonResponse('success', {
           passStaff,
         }),
-      );
+      )
     } catch (e) {
-      return next(new VError(e, "/users/committee/stat"));
+      return next(new VError(e, '/users/committee/stat'))
     }
   },
-);
+)
 
 // get user data from user id (for committee grading system)
 // return questions, profile (without name and contact information)
 router.get(
-  "/committee/:id",
+  '/committee/:id',
   adminAuthen(ROLE_COMMITTEE),
   async (req, res, next) => {
-    const userID = req.params.id;
+    const userID = req.params.id
 
     try {
-      const user = await User.findById(userID).populate("questions");
+      const user = await User.findById(userID).populate('questions')
 
       const data = pick(user, [
-        "academicYear",
-        "department",
-        "educationStatus",
-        "equivalentEducationDegree",
-        "faculty",
-        "university",
-        "questions",
-        "activities",
-        "major",
-        "staffComment",
-        "staffUsername",
-      ]);
+        'academicYear',
+        'department',
+        'educationStatus',
+        'equivalentEducationDegree',
+        'faculty',
+        'university',
+        'questions',
+        'activities',
+        'major',
+        'staffComment',
+        'staffUsername',
+      ])
 
-      return res.json(createJsonResponse("success", data));
+      return res.json(createJsonResponse('success', data))
     } catch (e) {
-      return next(new VError(`/users/committee/${userID}`, e));
+      return next(new VError(`/users/committee/${userID}`, e))
     }
   },
-);
+)
 
 // get user profile and questions
 router.get(
-  "/profile/:id",
+  '/profile/:id',
   adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
   async (req, res, next) => {
-    const userID = req.params.id;
+    const userID = req.params.id
 
     try {
-      const user = await User.findById(userID).populate("questions");
+      const user = await User.findById(userID).populate('questions')
 
-      return res.json(createJsonResponse("success", user));
+      return res.json(createJsonResponse('success', user))
     } catch (e) {
-      return next(new VError(`/users/profile/${userID}`, e));
+      return next(new VError(`/users/profile/${userID}`, e))
     }
   },
-);
+)
 
 // get user information and questions from access token
-router.get("/me", authen(), async (req, res, next) => {
+router.get('/me', authen(), async (req, res, next) => {
   const user = await User.findOne({
     _id: req.user._id,
-  }).populate("questions");
+  }).populate('questions')
 
   if (!user) {
-    return next(new Error("user not found"));
+    return next(new Error('user not found'))
   }
 
-  return res.send(createJsonResponse("success", user));
-});
+  return res.send(createJsonResponse('success', user))
+})
 
 // show completed-user stat
-router.get("/stat", async (req, res) => {
+router.get('/stat', async (req, res, next) => {
   try {
     // query total number of completed registration user
-    const completed = ["programming", "design", "content", "marketing"].map(
+    const completed = ['programming', 'design', 'content', 'marketing'].map(
       major => {
         return User.count({
-          status: "completed",
+          status: 'completed',
           major,
-        });
+        })
       },
-    );
+    )
 
     const [programming, design, content, marketing] = await Promise.all(
       completed,
-    );
+    )
 
     return res.json(
-      createJsonResponse("success", {
+      createJsonResponse('success', {
         programming,
         design,
         content,
         marketing,
       }),
-    );
+    )
   } catch (err) {
-    return next(new VError("/stat:", err));
+    return next(new VError('/stat:', err))
   }
-});
+})
 
 // backoffice candidates stat (dashboard)
 router.get(
-  "/stat/all",
+  '/stat/all',
   adminAuthen([ROLE_ADMIN, ROLE_MANAGER]),
   async (req, res, next) => {
     try {
@@ -279,7 +289,7 @@ router.get(
             step_info: {
               $ne: [
                 {
-                  $ifNull: ["$firstName", false],
+                  $ifNull: ['$firstName', false],
                 },
                 false,
               ],
@@ -287,7 +297,7 @@ router.get(
             step_contact: {
               $ne: [
                 {
-                  $ifNull: ["$phone", false],
+                  $ifNull: ['$phone', false],
                 },
                 false,
               ],
@@ -295,7 +305,7 @@ router.get(
             step_insight: {
               $ne: [
                 {
-                  $ifNull: ["$activities", false],
+                  $ifNull: ['$activities', false],
                 },
                 false,
               ],
@@ -307,13 +317,13 @@ router.get(
             step_major: {
               $and: [
                 {
-                  $eq: ["$step_info", true],
+                  $eq: ['$step_info', true],
                 },
                 {
-                  $eq: ["$step_contact", true],
+                  $eq: ['$step_contact', true],
                 },
                 {
-                  $eq: ["$step_insight", true],
+                  $eq: ['$step_insight', true],
                 },
               ],
             },
@@ -322,11 +332,11 @@ router.get(
         {
           $group: {
             _id: {
-              major: "$major",
-              stepInfo: "$step_info",
-              stepContact: "$step_contact",
-              stepInsight: "$step_insight",
-              stepMajor: "$step_major",
+              major: '$major',
+              stepInfo: '$step_info',
+              stepContact: '$step_contact',
+              stepInsight: '$step_insight',
+              stepMajor: '$step_major',
             },
             userCount: {
               $sum: 1,
@@ -336,20 +346,20 @@ router.get(
       ])
         .cursor({})
         .exec()
-        .toArray();
+        .toArray()
 
       const completedTimeline = await User.aggregate([
         {
           $group: {
             _id: {
               month: {
-                $month: "$completed_at",
+                $month: '$completed_at',
               },
               day: {
-                $dayOfMonth: "$completed_at",
+                $dayOfMonth: '$completed_at',
               },
               year: {
-                $year: "$completed_at",
+                $year: '$completed_at',
               },
             },
             count: {
@@ -359,29 +369,29 @@ router.get(
         },
         {
           $sort: {
-            "_id.month": 1,
-            "_id.day": 1,
+            '_id.month': 1,
+            '_id.day': 1,
           },
         },
       ])
         .cursor({})
         .exec()
-        .toArray();
+        .toArray()
 
-      const totalCandidate = await User.count({});
+      const totalCandidate = await User.count({})
 
-      const completed = ["programming", "design", "content", "marketing"].map(
+      const completed = ['programming', 'design', 'content', 'marketing'].map(
         major => {
-          return User.count({major});
+          return User.count({ major })
         },
-      );
+      )
 
       const [programming, design, content, marketing] = await Promise.all(
         completed,
-      );
+      )
 
       return res.send(
-        createJsonResponse("success", {
+        createJsonResponse('success', {
           totalCandidate,
           programming,
           design,
@@ -390,11 +400,11 @@ router.get(
           countUserStep,
           completedTimeline,
         }),
-      );
+      )
     } catch (e) {
-      return next(new VError(e, "/stat/all"));
+      return next(new VError(e, '/stat/all'))
     }
   },
-);
+)
 
-export default router;
+export default router

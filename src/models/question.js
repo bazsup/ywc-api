@@ -1,20 +1,19 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const {Schema} = mongoose;
-import _ from "lodash";
+const { Schema } = mongoose
 
 const answerSchema = new Schema({
   answer: String,
-  point: {type: Number, select: false, default: 0},
-});
+  point: { type: Number, select: false, default: 0 },
+})
 
 const schema = new Schema({
   confirmedMajor: {
     type: String,
-    enum: ["content", "programming", "design", "marketing"],
+    enum: ['content', 'programming', 'design', 'marketing'],
   },
   generalQuestions: [answerSchema],
   majorQuestions: [answerSchema],
-});
+})
 
-export default mongoose.model("Question", schema);
+export default mongoose.model('Question', schema)

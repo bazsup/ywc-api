@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:9
+      - image: circleci/node:10
 
     working_directory: ~/repo
 
@@ -29,10 +29,10 @@ jobs:
     docker:
       - image: google/cloud-sdk
     environment:
-      - PROJECT_NAME: "backend"
-      - GOOGLE_PROJECT_ID: "ywc-backend-16"
+      - PROJECT_NAME: "ywc17-api"
+      - GOOGLE_PROJECT_ID: "webmastercamp17"
       - GOOGLE_COMPUTE_ZONE: "asia-southeast1-a"
-      - GOOGLE_CLUSTER_NAME: "backend-cluster"
+      - GOOGLE_CLUSTER_NAME: "ywc-cluster"
     steps:
       - checkout
       - run:

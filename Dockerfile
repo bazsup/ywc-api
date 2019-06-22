@@ -15,7 +15,7 @@ COPY . .
 ENV NODE_ENV=production
 
 # build application
-RUN npm run build
+RUN yarn run build
 
 # Expose the port (http & https) and run application
 EXPOSE 3000

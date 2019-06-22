@@ -46,10 +46,10 @@ spec:
         - name: MONGODB_URI
           valueFrom:
             secretKeyRef:
-              name: secret
+              name: secret-staging
               key: mongourl
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
-              name: secret
+              name: secret-staging
               key: jwtsecret

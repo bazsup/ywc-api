@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: ywc17-api
-        image: asia.gcr.io/webmastercamp17/ywc17-api:lastest
+        image: asia.gcr.io/webmastercamp17/ywc17-api:latest
         ports:
         - name: http
           containerPort: 3000

@@ -5,7 +5,7 @@ metadata:
   namespace: ywc17-api
 spec:
   selector:
-    app: ${PROJECT_NAME}
+    app: ${PROJECT_NAME}_staging
   ports:
   - name: http
     port: 3000

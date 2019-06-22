@@ -1,0 +1,55 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ywc17-api-staging
+  namespace: ywc17-api
+spec:
+  selector:
+    app: ywc17-api-staging
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: ywc17-api-staging
+  namespace: ywc17-api
+  labels:
+    app: ywc17-api-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ywc17-api-staging
+  template:
+    metadata:
+      labels:
+        app: ywc17-api-staging
+    spec:
+      containers:
+      - name: ywc17-api
+        image: asia.gcr.io/webmastercamp17/ywc17-api-staging:latest
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2048Mi
+          requests:
+            cpu: 500m
+            memory: 256Mi
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: mongourl
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: jwtsecret

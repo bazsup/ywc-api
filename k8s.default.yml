@@ -1,11 +1,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ${PROJECT_NAME}
+  name: ywc17-api
   namespace: ywc17-api
 spec:
   selector:
-    app: ${PROJECT_NAME}
+    app: ywc17-api
   ports:
   - name: http
     port: 3000
@@ -14,23 +14,23 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: ${PROJECT_NAME}
+  name: ywc17-api
   namespace: ywc17-api
   labels:
-    app: ${PROJECT_NAME}
+    app: ywc17-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${PROJECT_NAME}
+      app: ywc17-api
   template:
     metadata:
       labels:
-        app: ${PROJECT_NAME}
+        app: ywc17-api
     spec:
       containers:
-      - name: ${PROJECT_NAME}
-        image: asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
+      - name: ywc17-api
+        image: asia.gcr.io/webmaster17/ywc17-api:lastest
         ports:
         - name: http
           containerPort: 3000

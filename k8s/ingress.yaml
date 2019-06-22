@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ywc17-api
+  namespace: ywc17-api
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+  - hosts:
+    - api.ywc.in.th
+    secretName: cert-ywc-api
+  rules:
+  - host: api.ywc.in.th
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ywc17-api
+          servicePort: 3000

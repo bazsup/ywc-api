@@ -1,0 +1,20 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: cert-ywc-api
+  namespace: ywc17-api
+spec:
+  secretName: cert-ywc-api
+  dnsNames:
+  - api.ywc.in.th
+  - api-staging.ywc.in.th
+  acme:
+    config:
+    - http01:
+        ingressClass: nginx
+      domains:
+      - api.ywc.in.th
+      - api-staging.ywc.in.th
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer

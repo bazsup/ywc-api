@@ -1,12 +1,12 @@
 # production build dockerfile
-FROM node:8
+FROM node:10
 
 # Create the directory
 WORKDIR /usr/src/app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN yarn install
 
 # Bundle the app src
 COPY . .
@@ -18,6 +18,6 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Expose the port (http & https) and run application
-EXPOSE 3000 3443
+EXPOSE 3000
 
 CMD ["node", "build/bin/server.js"]

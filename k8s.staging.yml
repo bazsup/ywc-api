@@ -1,11 +1,11 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ${PROJECT_NAME}_staging
+  name: ${PROJECT_NAME}-staging
   namespace: ywc17-api
 spec:
   selector:
-    app: ${PROJECT_NAME}_staging
+    app: ${PROJECT_NAME}-staging
   ports:
   - name: http
     port: 3000
@@ -14,23 +14,23 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: ${PROJECT_NAME}_staging
+  name: ${PROJECT_NAME}-staging
   namespace: ywc17-api
   labels:
-    app: ${PROJECT_NAME}_staging
+    app: ${PROJECT_NAME}-staging
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${PROJECT_NAME}_staging
+      app: ${PROJECT_NAME}-staging
   template:
     metadata:
       labels:
-        app: ${PROJECT_NAME}_staging
+        app: ${PROJECT_NAME}-staging
     spec:
       containers:
-      - name: ${PROJECT_NAME}_staging
-        image: asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}_staging:${CIRCLE_SHA1}
+      - name: ${PROJECT_NAME}-staging
+        image: asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}-staging:${CIRCLE_SHA1}
         ports:
         - name: http
           containerPort: 3000
@@ -46,10 +46,10 @@ spec:
         - name: MONGODB_URI
           valueFrom:
             secretKeyRef:
-              name: secret_staging
+              name: secret-staging
               key: mongourl
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
-              name: secret_staging
+              name: secret-staging
               key: jwtsecret

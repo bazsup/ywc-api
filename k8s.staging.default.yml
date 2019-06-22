@@ -29,7 +29,7 @@ spec:
         app: ywc17-api-staging
     spec:
       containers:
-      - name: ywc17-api
+      - name: ywc17-api-staging
         image: asia.gcr.io/webmastercamp17/ywc17-api-staging:latest
         ports:
         - name: http

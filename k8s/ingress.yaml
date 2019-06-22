@@ -10,6 +10,7 @@ spec:
   tls:
   - hosts:
     - api.ywc.in.th
+    - api-staging.ywc.in.th
     secretName: cert-ywc-api
   rules:
   - host: api.ywc.in.th
@@ -18,4 +19,11 @@ spec:
       - path: /
         backend:
           serviceName: ywc17-api
+          servicePort: 3000
+  - host: api-staging.ywc.in.th
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ywc17-api-staging
           servicePort: 3000

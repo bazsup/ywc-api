@@ -58,7 +58,7 @@ jobs:
           name: Deploy to Kubernates
           command: |
             envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
-            kubectl apply -f ${HOME}/patched_k8s.yml
+            kubectl set image -n ${PROJECT_NAME} deployment/${PROJECT_NAME} ${PROJECT_NAME}=asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
             kubectl rollout status deployment/${PROJECT_NAME}
   deploy_to_staging:
     docker:
@@ -90,10 +90,10 @@ jobs:
             gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://asia.gcr.io
             docker push asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}-staging:${CIRCLE_SHA1}
       - run:
-          name: Deploy to Kubernates
+          name: Deploy to Kubernetes
           command: |
             envsubst < ${HOME}/project/k8s.staging.yml > ${HOME}/patched_k8s.yml
-            kubectl apply -f ${HOME}/patched_k8s.yml
+            kubectl set image -n ${PROJECT_NAME} deployment/${PROJECT_NAME}-staging ${PROJECT_NAME}-staging=asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}-staging:${CIRCLE_SHA1}
             kubectl rollout status deployment/${PROJECT_NAME}-staging
 
 workflows:

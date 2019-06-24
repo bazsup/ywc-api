@@ -49,8 +49,8 @@ usePassword: true
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
 ##
 mongodbUsername: ywc17
-mongodbPassword: jiGArcqm4jCRHGmFqJGP2R
-mongodbDatabase: ywc17-prod
+mongodbPassword: duvnNPbaryV9bzDLu2EV76
+mongodbDatabase: ywc17-dev
 
 ## Whether enable/disable IPv6 on MongoDB
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#enabling/disabling-ipv6

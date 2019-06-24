@@ -43,7 +43,7 @@ usePassword: true
 ## MongoDB admin password
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
 ##
-# mongodbRootPassword:
+# mongodbRootPassword: B2AQ2r3pyt
 
 ## MongoDB custom user and database
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
@@ -85,7 +85,7 @@ securityContext:
   runAsUser: 1001
 
 ## Kubernetes Cluster Domain
-# clusterDomain: cluster.local
+clusterDomain: cluster.local
 
 ## Kubernetes service type
 service:
@@ -159,8 +159,8 @@ podLabels: {}
 ##
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 1000m
+    memory: 2048Mi
   requests:
     cpu: 100m
     memory: 256Mi

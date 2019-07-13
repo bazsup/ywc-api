@@ -14,6 +14,7 @@ const schema = new Schema({
   },
   generalQuestions: [answerSchema],
   majorQuestions: [answerSchema],
+
 })
 
 export default mongoose.model('Question', schema)

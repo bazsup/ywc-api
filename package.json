@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon ./src/bin/server.js --exec babel-node",
     "refactor": "prettier --config prettier.config.js --write \"**/**/*.js\" --ignore-path .prettierignore",
-    "eslint:fix": "eslint -c .eslintrc src/** --fix",
+    "eslint": "eslint -c .eslintrc src/**",
+    "eslint:fix": "yarn run eslint --fix",
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir build --source-maps",
     "build:file": "./node_modules/babel-cli/bin/babel src --out-file build/bundle.js --source-maps",
     "build:clean": "rm -rf build"
@@ -14,6 +15,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/webmasterCamp/ywc-api.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn eslint:fix && yarn eslint",
+      "pre-push": "yarn eslint"
+    }
   },
   "author": "Chun Rapeepat <chunza2542@gmail.com>",
   "license": "ISC",

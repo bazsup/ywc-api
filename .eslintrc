@@ -28,7 +28,7 @@
         "bracketSpacing": true,
         "semi": false,
         "useTabs": false,
-        "parser": "babylon",
+        "parser": "babel",
         "jsxBracketSameLine": true
       }
     ],
@@ -42,8 +42,8 @@
     "import/namespace": 2,
     "import/default": 2,
     "import/export": 2,
-    "import/first": false,
-    "import/no-named-default": false,
-    "import/no-webpack-loader-syntax": false
+    "import/first": 1,
+    "import/no-named-default": 1,
+    "import/no-webpack-loader-syntax": 1
   }
 }

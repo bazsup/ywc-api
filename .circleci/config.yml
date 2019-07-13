@@ -59,7 +59,7 @@ jobs:
           command: |
             envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
             kubectl set image -n ${PROJECT_NAME} deployment/${PROJECT_NAME} ${PROJECT_NAME}=asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
-            kubectl rollout status deployment/${PROJECT_NAME}
+            kubectl rollout status -n ${PROJECT_NAME} deployment/${PROJECT_NAME}
   deploy_to_staging:
     docker:
       - image: google/cloud-sdk
@@ -94,7 +94,7 @@ jobs:
           command: |
             envsubst < ${HOME}/project/k8s.staging.yml > ${HOME}/patched_k8s.yml
             kubectl set image -n ${PROJECT_NAME} deployment/${PROJECT_NAME}-staging ${PROJECT_NAME}-staging=asia.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}-staging:${CIRCLE_SHA1}
-            kubectl rollout status deployment/${PROJECT_NAME}-staging
+            kubectl rollout status -n ${PROJECT_NAME} deployment/${PROJECT_NAME}-staging
 
 workflows:
   version: 2

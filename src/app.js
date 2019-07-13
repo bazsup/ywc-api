@@ -18,7 +18,6 @@ console.log('connecting to', mongoURL)
 
 mongoose.connect(mongoURL, {
   useNewUrlParser: true,
-  useMongoClient: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 500,
 })

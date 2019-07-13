@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import VError from 'verror'
 import moment from 'moment'
-import { isArray } from 'lodash'
 import EmailValidator from 'email-validator'
 
 import { responseError } from '../middlewares/error'
@@ -166,7 +165,7 @@ router.put(
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
   async (req, res, next) => {
-    if (!isArray(req.body.answers)) {
+    if (!Array.isArray(req.body.answers)) {
       return responseError(res, 'answers is not the array')
     }
 
@@ -196,7 +195,7 @@ router.put(
   closeAfterDeadline,
   authen(ROLE_IN_PROGRESS),
   async (req, res, next) => {
-    if (!isArray(req.body.answers)) {
+    if (!Array.isArray(req.body.answers)) {
       return responseError(res, 'answers is not the array')
     }
 

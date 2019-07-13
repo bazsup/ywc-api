@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { pick } from 'lodash'
+import * as R from 'ramda'
 import VError from 'verror'
 
 import {
@@ -115,6 +115,13 @@ router.get('/staff', adminAuthen(ROLE_STAFF), async (req, res, next) => {
   }
 })
 
+export function pickStaffInfo(user) {
+  return R.pick(
+    ['birthdate', 'sex', 'educationStatus', 'questions', 'major'],
+    user,
+  )
+}
+
 // get user general question from user id (for staff grading system)
 router.get('/staff/:id', adminAuthen(ROLE_STAFF), async (req, res, next) => {
   const userID = req.params.id
@@ -122,13 +129,7 @@ router.get('/staff/:id', adminAuthen(ROLE_STAFF), async (req, res, next) => {
   try {
     const user = await User.findById(userID).populate('questions')
 
-    const data = pick(user, [
-      'birthdate',
-      'sex',
-      'educationStatus',
-      'questions',
-      'major',
-    ])
+    const data = pickStaffInfo(user)
 
     return res.json(createJsonResponse('success', data))
   } catch (e) {
@@ -185,6 +186,24 @@ router.get(
   },
 )
 
+export function pickCommitteeInfo(user) {
+  return R.pick(
+    [
+      'academicYear',
+      'department',
+      'educationStatus',
+      'equivalentEducationDegree',
+      'faculty',
+      'university',
+      'questions',
+      'activities',
+      'major',
+      'staffComment',
+      'staffUsername',
+    ],
+    user,
+  )
+}
 // get user data from user id (for committee grading system)
 // return questions, profile (without name and contact information)
 router.get(
@@ -196,19 +215,7 @@ router.get(
     try {
       const user = await User.findById(userID).populate('questions')
 
-      const data = pick(user, [
-        'academicYear',
-        'department',
-        'educationStatus',
-        'equivalentEducationDegree',
-        'faculty',
-        'university',
-        'questions',
-        'activities',
-        'major',
-        'staffComment',
-        'staffUsername',
-      ])
+      const data = pickCommitteeInfo(user)
 
       return res.json(createJsonResponse('success', data))
     } catch (e) {

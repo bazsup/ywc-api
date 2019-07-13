@@ -43,7 +43,7 @@ usePassword: true
 ## MongoDB admin password
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#setting-the-root-password-on-first-run
 ##
-# mongodbRootPassword: B2AQ2r3pyt
+mongodbRootPassword: B2AQ2r3pyt
 
 ## MongoDB custom user and database
 ## ref: https://github.com/bitnami/bitnami-docker-mongodb/blob/master/README.md#creating-a-user-and-database-on-first-run
@@ -344,6 +344,7 @@ metrics:
 
   ## Metrics exporter pod Annotation
   podAnnotations:
+    enable-vts-status: "true"
     prometheus.io/scrape: "true"
     prometheus.io/port: "9216"
 

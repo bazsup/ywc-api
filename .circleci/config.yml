@@ -18,12 +18,14 @@ jobs:
 
       - run: yarn install
 
+      - run: yarn eslint
+
+      - run: yarn build
+
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
-      - run: yarn build
 
       # run tests!
       # - run: yarn test

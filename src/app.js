@@ -12,9 +12,11 @@ import expressValidator from 'express-validator'
 import routes from './routes'
 import { errorHandler } from './middlewares/error'
 
-console.log('connecting to', process.env.MONGODB_URI)
+let mongoURL = process.env.MONGODB_URI
 
-mongoose.connect(process.env.MONGODB_URI, {
+console.log('connecting to', mongoURL)
+
+mongoose.connect(mongoURL, {
   useMongoClient: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 500,

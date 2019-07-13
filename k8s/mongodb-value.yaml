@@ -85,7 +85,7 @@ securityContext:
   runAsUser: 1001
 
 ## Kubernetes Cluster Domain
-clusterDomain: cluster.local
+clusterDomain: c.webmastercamp17.internal
 
 ## Kubernetes service type
 service:
